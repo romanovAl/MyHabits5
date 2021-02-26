@@ -1,0 +1,114 @@
+<resources>
+    <string name="app_name">My Habits</string>
+
+    <string name="priorityNum">%1$s priority</string>
+    <string name="times">%1$s times</string>
+
+    <string name="find_and_sort">Find and sort</string>
+    <string name="filter_type">Filter type</string>
+    <string name="search">Search</string>
+    <string name="app_my_habits">Application \"My Habits\"</string>
+    <string name="author_alex_romanov">Author - Alex Romanov</string>
+    <string name="github" translatable="false">GitHub - https://github.com/romanovAl</string>
+    <string name="email">Email - ml.naslednik2001@gmail.com</string>
+    <string name="telegram" translatable="false">Telegram - @romanovvAl</string>
+    <string name="habit_name">Habit name</string>
+    <string name="description">Description</string>
+    <string name="good_habit">Good</string>
+    <string name="bad_habit">Bad</string>
+    <string name="priority">Priority</string>
+    <string name="period">Period</string>
+    <string name="Count">Count</string>
+    <string name="period_is_not_chosen">Period is not selected</string>
+    <string name="priority_is_not_chosen">Priority is not selected</string>
+    <string name="by_priority">By priority</string>
+    <string name="by_period">By period</string>
+    <string name="by_quantity">By quantity</string>
+    <string name="by_date">By date</string>
+    <string name="without_filter">Without filter</string>
+    <string name="high_priorirty">High</string>
+    <string name="medium_priority">Medium</string>
+    <string name="low_priority">Low</string>
+    <string name="period_anhour">per hour</string>
+    <string name="period_aday">per day</string>
+    <string name="period_aweek">per week</string>
+    <string name="period_amonth">per month</string>
+    <string name="period_anyear">per year</string>
+    <string name="label_edit">Editing habit</string>
+    <string name="label_add">Adding habit</string>
+    <string name="view_pager_good">Good Habits</string>
+    <string name="view_pager_bad">Bad habits</string>
+    <string name="delete_habit">delete habit</string>
+    <string name="no_internet_connection">No internet connection!</string>
+    <string name="are_you_sure_you_want_to_delete">Are you sure you want to delete habit</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="upload_to_api">Upload to server</string>
+    <string name="download_from_api">Download from server</string>
+    <string name="Field_must_not_be_empty">Field must not be empty</string>
+    <string name="deleting_habbit">Deleting Habit</string>
+    <string name="done">Done</string>
+    <string name="You_should_do_this_habbit_toast">You should do this habit </string>
+
+    <string-array name="priorities">
+        <item>Priority is not selected</item>
+        <item>Low</item>
+        <item>High</item>
+    </string-array>
+
+    <string-array name="periods">
+        <item>Per hour</item>
+        <item>Per day</item>
+        <item>Per week</item>
+        <item>Per month</item>
+        <item>Per year</item>
+    </string-array>
+
+    <string-array name="filterTypes">
+        <item>By priority</item>
+        <item>By period</item>
+        <item>By quantity</item>
+        <item>By date</item>
+        <item>Without filter</item>
+    </string-array>
+
+    <string-array name="hsvs">
+        <item>(14, 27, 100)</item>
+        <item>(39, 27, 100)</item>
+        <item>(59, 27, 100)</item>
+        <item>(80, 27, 100)</item>
+        <item>(101, 27, 100)</item>
+        <item>(121, 27, 100)</item>
+        <item>(147, 27, 100)</item>
+        <item>(169, 27, 100)</item>
+        <item>(190, 27, 100)</item>
+        <item>(213, 27, 100)</item>
+        <item>(236, 27, 100)</item>
+        <item>(259, 27, 100)</item>
+        <item>(281, 27, 100)</item>
+        <item>(300, 27, 100)</item>
+        <item>(323, 27, 100)</item>
+        <item>(347, 27, 100)</item>
+        <item>(231, 27, 85)</item>
+    </string-array>
+
+    <string-array name="rgbs">
+        <item>(255, 203, 187)</item>
+        <item>(255, 232, 187)</item>
+        <item>(255, 255, 187)</item>
+        <item>(233, 255, 187)</item>
+        <item>(209, 255, 187)</item>
+        <item>(186, 255, 187)</item>
+        <item>(187, 255, 218)</item>
+        <item>(187, 255, 243)</item>
+        <item>(186, 243, 254)</item>
+        <item>(187, 218, 255)</item>
+        <item>(187, 191, 255)</item>
+        <item>(209, 187, 255)</item>
+        <item>(234, 187, 255)</item>
+        <item>(255, 185, 255)</item>
+        <item>(255, 187, 230)</item>
+        <item>(255, 187, 202)</item>
+        <item>(159, 168, 218)</item>
+    </string-array>
+</resources>
