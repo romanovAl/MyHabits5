@@ -1,11 +1,15 @@
 package com.example.myhabits3
 
 import android.content.res.ColorStateList
+import android.graphics.Color
+import android.opengl.Visibility
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
+import com.example.myhabits3.model.Util
+import kotlinx.android.synthetic.main.activity_add_and_edit.*
 import kotlinx.android.synthetic.main.color_picker_dialog_fragment.*
 import kotlinx.android.synthetic.main.color_picker_dialog_fragment.view.*
 
@@ -15,11 +19,17 @@ class ColorPickerDialogFragment : DialogFragment() {
 
     companion object {
 
-        const val TAG = "SimpleDialog"
+        const val TAG = "ColorPicker"
         const val DEFAULT_COLOR = 16
+        const val VISIBLE = View.VISIBLE
+        const val INVISIBLE = View.INVISIBLE
 
-        fun newInstance(): ColorPickerDialogFragment {
-            val args = Bundle()
+
+        fun newInstance(curColorNumber: Int): ColorPickerDialogFragment {
+
+            val args = Bundle().apply {
+                putInt("curColorNumber", curColorNumber)
+            }
             val fragment = ColorPickerDialogFragment()
             fragment.arguments = args
             return fragment
@@ -27,13 +37,14 @@ class ColorPickerDialogFragment : DialogFragment() {
 
     }
 
-    interface IChangeColor{
-        fun onChangeColor(newColor : Int)
+    interface IChangeColor {
+        fun onChangeColor(newColor: Int, newColorNumber: Int)
     }
 
-    lateinit var listOfColors: Array<Int>
     lateinit var listOfRgb: Array<String>
     lateinit var listOfHsv: Array<String>
+
+    var colors = Util.intColors
 
     lateinit var iChangeColor: IChangeColor
 
@@ -65,11 +76,18 @@ class ColorPickerDialogFragment : DialogFragment() {
 
         val colorCardsList: MutableList<View> = mutableListOf()
 
-        listOfColors = activity!!.resources.getIntArray(R.array.cardsColors).toTypedArray()
         listOfRgb = activity!!.resources.getStringArray(R.array.rgbs)
         listOfHsv = activity!!.resources.getStringArray(R.array.hsvs)
 
-        choseColor(DEFAULT_COLOR)
+        val curColorNumber = arguments!!.getInt("curColorNumber")
+
+        if (curColorNumber != DEFAULT_COLOR) {
+            choseColor(curColorNumber)
+        } else {
+            choseColor(DEFAULT_COLOR)
+        }
+
+
 
         defaultColorButton.setOnClickListener {
             choseColor(DEFAULT_COLOR)
@@ -125,6 +143,10 @@ class ColorPickerDialogFragment : DialogFragment() {
                 choseColor(15)
             }
 
+            applyColorButton.setOnClickListener {
+                dismiss()
+            }
+
         }
 
         super.onViewCreated(view, savedInstanceState)
@@ -132,13 +154,44 @@ class ColorPickerDialogFragment : DialogFragment() {
 
     private fun choseColor(colorNumber: Int) {
 
-        chosenColorCard.setCardForegroundColor(ColorStateList.valueOf(listOfColors[colorNumber]))
+        val colorForCard = colors[colorNumber]!!
+
+        chosenColorCard.setCardForegroundColor(ColorStateList.valueOf(colorForCard))
 
         rgbColorTextView.text = "RGB - ${listOfRgb[colorNumber]}"
 
         hsvColorTextView.text = "HSV - ${listOfHsv[colorNumber]}"
 
-        iChangeColor.onChangeColor(listOfColors[colorNumber])
+        iChangeColor.onChangeColor(colorForCard, colorNumber) //TODO переделать чтобы при выходе цвет не менялся, а менялся только по нажатию OK
+
+        val checkedColors = arrayOf(checkedColor1, checkedColor2, checkedColor3, checkedColor4, checkedColor5,
+            checkedColor6, checkedColor7, checkedColor8, checkedColor9, checkedColor10, checkedColor11,
+            checkedColor12, checkedColor13, checkedColor14, checkedColor15, checkedColor16,
+        )
+
+        checkedColors.forEach { it.visibility = INVISIBLE }
+        if (colorNumber != 16) {
+            checkedColors[colorNumber].visibility = VISIBLE
+        }
+
+        when (colorNumber) {
+            0 -> checkedColor1.visibility = VISIBLE
+            1 -> checkedColor2.visibility = VISIBLE
+            2 -> checkedColor3.visibility = VISIBLE
+            3 -> checkedColor4.visibility = VISIBLE
+            4 -> checkedColor5.visibility = VISIBLE
+            5 -> checkedColor6.visibility = VISIBLE
+            6 -> checkedColor7.visibility = VISIBLE
+            7 -> checkedColor8.visibility = VISIBLE
+            8 -> checkedColor9.visibility = VISIBLE
+            9 -> checkedColor10.visibility = VISIBLE
+            10 -> checkedColor11.visibility = VISIBLE
+            11 -> checkedColor12.visibility = VISIBLE
+            12 -> checkedColor13.visibility = VISIBLE
+            13 -> checkedColor14.visibility = VISIBLE
+            14 -> checkedColor15.visibility = VISIBLE
+            15 -> checkedColor16.visibility = VISIBLE
+        }
 
     }
 

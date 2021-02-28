@@ -48,7 +48,9 @@ class MainAdapter (private var habits: ArrayList<Habit>, val adapterOnClickConst
                 habitDescriptionRecyclerElement.text = habit.description
                 habitPeriodRecyclerElement.text = habit.period
                 habitPriorityRecyclerElement.text = context.getString(R.string.priorityNum,habit.priority)
-
+//                habitNameCard.setBackgroundColor(habit.color)
+                divider2.setBackgroundColor(habit.color)
+//                habitNameCard.setStrokeColor(habit.color)
 
                 habitTypeRecyclerElement.text = if(habit.type){
                     "Хорошая"

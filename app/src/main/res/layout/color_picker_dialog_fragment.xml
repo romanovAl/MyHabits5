@@ -14,8 +14,7 @@
         app:cardCornerRadius="8dp"
         app:cardElevation="0dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/rgbColorTextView"
+        app:layout_constraintStart_toEndOf="@+id/textView"
         app:layout_constraintTop_toTopOf="parent"/>
 
     <HorizontalScrollView
@@ -50,7 +49,17 @@
                 app:cardCornerRadius="8dp"
                 app:cardElevation="0dp"
                 app:strokeColor="@android:color/background_light"
-                app:strokeWidth="1dp" />
+                app:strokeWidth="1dp" >
+
+                <ImageView
+                    android:id="@+id/checkedColor1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_baseline_check_24"
+                    android:layout_gravity="center"
+                    android:visibility="invisible"/>
+
+            </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/colorCard2"
@@ -64,7 +73,17 @@
                 app:cardCornerRadius="8dp"
                 app:cardElevation="0dp"
                 app:strokeColor="@android:color/background_light"
-                app:strokeWidth="1dp" />
+                app:strokeWidth="1dp" >
+
+                <ImageView
+                    android:id="@+id/checkedColor2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_baseline_check_24"
+                    android:layout_gravity="center"
+                    android:visibility="invisible"/>
+
+            </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/colorCard3"
@@ -78,7 +97,17 @@
                 app:cardCornerRadius="8dp"
                 app:cardElevation="0dp"
                 app:strokeColor="@android:color/background_light"
-                app:strokeWidth="1dp" />
+                app:strokeWidth="1dp" >
+
+                <ImageView
+                    android:id="@+id/checkedColor3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_baseline_check_24"
+                    android:layout_gravity="center"
+                    android:visibility="invisible"/>
+
+            </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/colorCard4"
@@ -92,7 +121,17 @@
                 app:cardCornerRadius="8dp"
                 app:cardElevation="0dp"
                 app:strokeColor="@android:color/background_light"
-                app:strokeWidth="1dp" />
+                app:strokeWidth="1dp" >
+
+                <ImageView
+                    android:id="@+id/checkedColor4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_baseline_check_24"
+                    android:layout_gravity="center"
+                    android:visibility="invisible"/>
+
+            </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/colorCard5"
@@ -106,7 +145,17 @@
                 app:cardCornerRadius="8dp"
                 app:cardElevation="0dp"
                 app:strokeColor="@android:color/background_light"
-                app:strokeWidth="1dp" />
+                app:strokeWidth="1dp" >
+
+                <ImageView
+                    android:id="@+id/checkedColor5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_baseline_check_24"
+                    android:layout_gravity="center"
+                    android:visibility="invisible"/>
+
+            </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/colorCard6"
@@ -120,7 +169,17 @@
                 app:cardCornerRadius="8dp"
                 app:cardElevation="0dp"
                 app:strokeColor="@android:color/background_light"
-                app:strokeWidth="1dp" />
+                app:strokeWidth="1dp" >
+
+                <ImageView
+                    android:id="@+id/checkedColor6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_baseline_check_24"
+                    android:layout_gravity="center"
+                    android:visibility="invisible"/>
+
+            </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/colorCard7"
@@ -134,7 +193,17 @@
                 app:cardCornerRadius="8dp"
                 app:cardElevation="0dp"
                 app:strokeColor="@android:color/background_light"
-                app:strokeWidth="1dp" />
+                app:strokeWidth="1dp" >
+
+                <ImageView
+                    android:id="@+id/checkedColor7"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_baseline_check_24"
+                    android:layout_gravity="center"
+                    android:visibility="invisible"/>
+
+            </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/colorCard8"
@@ -148,7 +217,17 @@
                 app:cardCornerRadius="8dp"
                 app:cardElevation="0dp"
                 app:strokeColor="@android:color/background_light"
-                app:strokeWidth="1dp" />
+                app:strokeWidth="1dp" >
+
+                <ImageView
+                    android:id="@+id/checkedColor8"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_baseline_check_24"
+                    android:layout_gravity="center"
+                    android:visibility="invisible"/>
+
+            </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/colorCard9"
@@ -162,7 +241,17 @@
                 app:cardCornerRadius="8dp"
                 app:cardElevation="0dp"
                 app:strokeColor="@android:color/background_light"
-                app:strokeWidth="1dp" />
+                app:strokeWidth="1dp" >
+
+                <ImageView
+                    android:id="@+id/checkedColor9"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_baseline_check_24"
+                    android:layout_gravity="center"
+                    android:visibility="invisible"/>
+
+            </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/colorCard10"
@@ -176,7 +265,17 @@
                 app:cardCornerRadius="8dp"
                 app:cardElevation="0dp"
                 app:strokeColor="@android:color/background_light"
-                app:strokeWidth="1dp" />
+                app:strokeWidth="1dp" >
+
+                <ImageView
+                    android:id="@+id/checkedColor10"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_baseline_check_24"
+                    android:layout_gravity="center"
+                    android:visibility="invisible"/>
+
+            </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/colorCard11"
@@ -190,7 +289,17 @@
                 app:cardCornerRadius="8dp"
                 app:cardElevation="0dp"
                 app:strokeColor="@android:color/background_light"
-                app:strokeWidth="1dp" />
+                app:strokeWidth="1dp" >
+
+                <ImageView
+                    android:id="@+id/checkedColor11"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_baseline_check_24"
+                    android:layout_gravity="center"
+                    android:visibility="invisible"/>
+
+            </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/colorCard12"
@@ -204,7 +313,17 @@
                 app:cardCornerRadius="8dp"
                 app:cardElevation="0dp"
                 app:strokeColor="@android:color/background_light"
-                app:strokeWidth="1dp" />
+                app:strokeWidth="1dp" >
+
+                <ImageView
+                    android:id="@+id/checkedColor12"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_baseline_check_24"
+                    android:layout_gravity="center"
+                    android:visibility="invisible"/>
+
+            </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/colorCard13"
@@ -218,7 +337,17 @@
                 app:cardCornerRadius="8dp"
                 app:cardElevation="0dp"
                 app:strokeColor="@android:color/background_light"
-                app:strokeWidth="1dp" />
+                app:strokeWidth="1dp" >
+
+                <ImageView
+                    android:id="@+id/checkedColor13"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_baseline_check_24"
+                    android:layout_gravity="center"
+                    android:visibility="invisible"/>
+
+            </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/colorCard14"
@@ -232,7 +361,17 @@
                 app:cardCornerRadius="8dp"
                 app:cardElevation="0dp"
                 app:strokeColor="@android:color/background_light"
-                app:strokeWidth="1dp" />
+                app:strokeWidth="1dp" >
+
+                <ImageView
+                    android:id="@+id/checkedColor14"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_baseline_check_24"
+                    android:layout_gravity="center"
+                    android:visibility="invisible"/>
+
+            </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/colorCard15"
@@ -246,7 +385,17 @@
                 app:cardCornerRadius="8dp"
                 app:cardElevation="0dp"
                 app:strokeColor="@android:color/background_light"
-                app:strokeWidth="1dp" />
+                app:strokeWidth="1dp" >
+
+                <ImageView
+                    android:id="@+id/checkedColor15"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_baseline_check_24"
+                    android:layout_gravity="center"
+                    android:visibility="invisible"/>
+
+            </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/colorCard16"
@@ -260,7 +409,17 @@
                 app:cardCornerRadius="8dp"
                 app:cardElevation="0dp"
                 app:strokeColor="@android:color/background_light"
-                app:strokeWidth="1dp" />
+                app:strokeWidth="1dp" >
+
+                <ImageView
+                    android:id="@+id/checkedColor16"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_baseline_check_24"
+                    android:layout_gravity="center"
+                    android:visibility="invisible"/>
+
+            </com.google.android.material.card.MaterialCardView>
 
 
         </LinearLayout>
@@ -270,16 +429,17 @@
         android:id="@+id/rgbColorTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:fontFamily="@font/roboto_mono"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:fontFamily="sans-serif"
         android:text="TextView"
         android:textSize="14sp"
-        app:layout_constraintBottom_toTopOf="@+id/horizontalScrollView"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.26999998"
+        app:layout_constraintTop_toBottomOf="@+id/horizontalScrollView"
+        app:layout_constraintVertical_bias="0.0"
         tools:text="R 13 G 37 B 228" />
 
     <TextView
@@ -288,11 +448,12 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:text="TextView"
-        app:layout_constraintBottom_toTopOf="@+id/horizontalScrollView"
+        app:layout_constraintBottom_toBottomOf="@+id/rgbColorTextView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/rgbColorTextView"
+        app:layout_constraintHorizontal_bias="0.01"
+        app:layout_constraintStart_toEndOf="@+id/rgbColorTextView"
+        app:layout_constraintTop_toBottomOf="@+id/horizontalScrollView"
+        app:layout_constraintVertical_bias="1.0"
         tools:text="(228.0, 0.13, 0.37)" />
 
     <com.google.android.material.button.MaterialButton
@@ -303,13 +464,42 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
-        android:text="Цвет по умолчанию"
+        android:text="По умолчанию"
         android:textColor="@color/colorPrimaryCustom"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/horizontalScrollView"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/horizontalScrollView"
+        app:layout_constraintTop_toBottomOf="@+id/rgbColorTextView"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/applyColorButton"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:text="OK"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/defaultColorButton"
+        app:layout_constraintTop_toBottomOf="@+id/hsvColorTextView" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:fontFamily="@font/roboto_mono"
+        android:text="Выбор цвета привычки :"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="@+id/chosenColorCard"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/chosenColorCard"
         app:layout_constraintVertical_bias="0.0" />
 
     <!--    <androidx.recyclerview.widget.RecyclerView-->
