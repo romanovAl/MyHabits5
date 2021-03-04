@@ -20,6 +20,17 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDarkCustom</item>
         <item name="colorAccent">@color/colorAccentCustom</item>
         <item name="toolbarStyle">@style/Widget.AppCompat.Toolbar</item>
-
+        <item name="buttonBarPositiveButtonStyle">@style/YDialogPositiveButton</item>
+        <item name="buttonBarNegativeButtonStyle">@style/YDialogNegativeButton</item>
     </style>
+
+    <style name="YDialogPositiveButton" parent="@style/Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/colorPrimaryDarkCustom</item>
+    </style>
+
+    <style name="YDialogNegativeButton" parent="@style/Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/colorPrimaryDarkCustom</item>
+    </style>
+
+
 </resources>

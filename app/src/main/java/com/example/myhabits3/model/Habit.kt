@@ -2,7 +2,14 @@ package com.example.myhabits3.model
 
 import java.io.Serializable
 
-data class Habit  (
-    var name: String, var description: String, var priority: String, var type:Boolean,
-    var period:String, var color: Int, var times: Int?
+data class Habit(
+    var title: String,
+    var description: String,
+    var priority: Int,
+    var type: Int,
+    var count: Int,
+    var frequency: Int,
+    var color: Int,
+    var date: Long,
+    var doneDates: MutableList<Long>
 ) : Serializable

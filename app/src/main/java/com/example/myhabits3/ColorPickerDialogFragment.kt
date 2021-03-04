@@ -1,15 +1,12 @@
 package com.example.myhabits3
 
 import android.content.res.ColorStateList
-import android.graphics.Color
-import android.opengl.Visibility
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import com.example.myhabits3.model.Util
-import kotlinx.android.synthetic.main.activity_add_and_edit.*
 import kotlinx.android.synthetic.main.color_picker_dialog_fragment.*
 import kotlinx.android.synthetic.main.color_picker_dialog_fragment.view.*
 
@@ -20,6 +17,7 @@ class ColorPickerDialogFragment : DialogFragment() {
     companion object {
 
         const val TAG = "ColorPicker"
+        const val COLOR_NUMBER_BUNDLE_ARG = "curColorNumber"
         const val DEFAULT_COLOR = 16
         const val VISIBLE = View.VISIBLE
         const val INVISIBLE = View.INVISIBLE
@@ -28,7 +26,7 @@ class ColorPickerDialogFragment : DialogFragment() {
         fun newInstance(curColorNumber: Int): ColorPickerDialogFragment {
 
             val args = Bundle().apply {
-                putInt("curColorNumber", curColorNumber)
+                putInt(COLOR_NUMBER_BUNDLE_ARG, curColorNumber)
             }
             val fragment = ColorPickerDialogFragment()
             fragment.arguments = args
@@ -41,12 +39,12 @@ class ColorPickerDialogFragment : DialogFragment() {
         fun onChangeColor(newColor: Int, newColorNumber: Int)
     }
 
-    lateinit var listOfRgb: Array<String>
-    lateinit var listOfHsv: Array<String>
+    private lateinit var listOfRgb: Array<String>
+    private lateinit var listOfHsv: Array<String>
 
-    var colors = Util.intColors
+    private var colors = Util.intColors
 
-    lateinit var iChangeColor: IChangeColor
+    private lateinit var iChangeColor: IChangeColor
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -62,32 +60,28 @@ class ColorPickerDialogFragment : DialogFragment() {
 
     override fun onStart() {
 
-        val dialog = dialog;
-        if (dialog != null) {
-            val width = ViewGroup.LayoutParams.MATCH_PARENT;
-            val height = ViewGroup.LayoutParams.WRAP_CONTENT;
-            dialog.window?.setLayout(width, height);
+        dialog?.let {
+            val width = ViewGroup.LayoutParams.MATCH_PARENT
+            val height = ViewGroup.LayoutParams.WRAP_CONTENT
+            it.window?.setLayout(width, height)
         }
+
 
         super.onStart()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        val colorCardsList: MutableList<View> = mutableListOf()
-
         listOfRgb = activity!!.resources.getStringArray(R.array.rgbs)
         listOfHsv = activity!!.resources.getStringArray(R.array.hsvs)
 
-        val curColorNumber = arguments!!.getInt("curColorNumber")
+        val curColorNumber = arguments!!.getInt(COLOR_NUMBER_BUNDLE_ARG)
 
         if (curColorNumber != DEFAULT_COLOR) {
             choseColor(curColorNumber)
         } else {
             choseColor(DEFAULT_COLOR)
         }
-
-
 
         defaultColorButton.setOnClickListener {
             choseColor(DEFAULT_COLOR)
@@ -144,6 +138,10 @@ class ColorPickerDialogFragment : DialogFragment() {
             }
 
             applyColorButton.setOnClickListener {
+                iChangeColor.onChangeColor(
+                    curColorForCard,
+                    this@ColorPickerDialogFragment.curColorNumber
+                )
                 dismiss()
             }
 
@@ -152,21 +150,27 @@ class ColorPickerDialogFragment : DialogFragment() {
         super.onViewCreated(view, savedInstanceState)
     }
 
+    private var curColorForCard = colors[DEFAULT_COLOR]!!
+    private var curColorNumber = DEFAULT_COLOR
+
     private fun choseColor(colorNumber: Int) {
 
-        val colorForCard = colors[colorNumber]!!
+        curColorForCard = colors[colorNumber]!!
+        curColorNumber = colorNumber
 
-        chosenColorCard.setCardForegroundColor(ColorStateList.valueOf(colorForCard))
+        chosenColorCard.setCardForegroundColor(ColorStateList.valueOf(curColorForCard))
 
-        rgbColorTextView.text = "RGB - ${listOfRgb[colorNumber]}"
+        rgbColorTextView.text =
+            requireContext().getString(R.string.RGB,listOfRgb[colorNumber])
 
-        hsvColorTextView.text = "HSV - ${listOfHsv[colorNumber]}"
+        hsvColorTextView.text =
+            requireContext().getString(R.string.HSV,listOfHsv[colorNumber])
 
-        iChangeColor.onChangeColor(colorForCard, colorNumber) //TODO переделать чтобы при выходе цвет не менялся, а менялся только по нажатию OK
-
-        val checkedColors = arrayOf(checkedColor1, checkedColor2, checkedColor3, checkedColor4, checkedColor5,
-            checkedColor6, checkedColor7, checkedColor8, checkedColor9, checkedColor10, checkedColor11,
-            checkedColor12, checkedColor13, checkedColor14, checkedColor15, checkedColor16,
+        val checkedColors = arrayOf(checkedColor1, checkedColor2, checkedColor3,
+            checkedColor4, checkedColor5, checkedColor6, checkedColor7,
+            checkedColor8, checkedColor9, checkedColor10, checkedColor11,
+            checkedColor12, checkedColor13, checkedColor14, checkedColor15,
+            checkedColor16,
         )
 
         checkedColors.forEach { it.visibility = INVISIBLE }

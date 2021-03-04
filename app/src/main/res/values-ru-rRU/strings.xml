@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">testKotlin</string>
+    <string name="app_name">Мои привычки</string>
     <string name="priority">Приоритет</string>
-    <string name="times">%1$s раз(а)</string>
+    <string name="times">раз(а)</string>
     <string name="find_and_sort">Поиск и сортировка</string>
     <string name="filter_type">Тип фильтра</string>
     <string name="search">Найти</string>
@@ -16,7 +16,7 @@
     <string name="period">Периодичность</string>
     <string name="Count">Количество</string>
     <string name="period_is_not_chosen">Период не выбран</string>
-    <string name="priority_is_not_chosen">Приоритет не выбран</string>
+    <string name="priority_is_not_chosen">Без приоритета</string>
     <string name="by_priority">По приоритету</string>
     <string name="by_period">По периоду</string>
     <string name="by_quantity">По количеству</string>
@@ -30,8 +30,8 @@
     <string name="period_aweek">в неделю</string>
     <string name="period_amonth">в месяц</string>
     <string name="period_anyear">в год</string>
-    <string name="label_edit">Редактирование привычки</string>
-    <string name="label_add">Добавление привычки</string>
+    <string name="label_edit">Изменить привычку</string>
+    <string name="label_add">Новая привычка</string>
     <string name="view_pager_good">Хорошие привычки</string>
     <string name="view_pager_bad">Плохие привычки</string>
     <string name="delete_habit">Удалить привычку</string>
@@ -45,10 +45,9 @@
     <string name="deleting_habbit">Удаление привычки</string>
     <string name="done">Я сделяль</string>
     <string name="You_should_do_this_habbit_toast">Вам стоит выполнить эту привычку еще</string>
-    <string name="priorityNum">%1$s приоритет</string>
 
     <string-array name="priorities">
-        <item>Приоритет не выбран</item>
+        <item>Без приоритета</item>
         <item>Низкий</item>
         <item>Высокий</item>
     </string-array>
@@ -68,4 +67,9 @@
         <item>По дате</item>
         <item>Без фильтра</item>
     </string-array>
+    <string name="create">Создать</string>
+    <string name="save">Сохранить</string>
+    <string name="are_you_sure_you_want_to_exit">Вы уверены, что хотите выйти?</string>
+    <string name="habit_will_not_be_saved">Привычка не будет сохранена</string>
+
 </resources>

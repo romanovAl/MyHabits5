@@ -1,8 +1,7 @@
 <resources>
-    <string name="app_name">My Habits</string>
+    <string name="app_name">My Habits</string>>
 
-    <string name="priorityNum">%1$s priority</string>
-    <string name="times">%1$s times</string>
+    <string name="times">times</string>
 
     <string name="find_and_sort">Find and sort</string>
     <string name="filter_type">Filter type</string>
@@ -19,8 +18,7 @@
     <string name="priority">Priority</string>
     <string name="period">Period</string>
     <string name="Count">Count</string>
-    <string name="period_is_not_chosen">Period is not selected</string>
-    <string name="priority_is_not_chosen">Priority is not selected</string>
+    <string name="priority_is_not_chosen">No priority</string>
     <string name="by_priority">By priority</string>
     <string name="by_period">By period</string>
     <string name="by_quantity">By quantity</string>
@@ -41,6 +39,8 @@
     <string name="delete_habit">delete habit</string>
     <string name="no_internet_connection">No internet connection!</string>
     <string name="are_you_sure_you_want_to_delete">Are you sure you want to delete habit</string>
+    <string name="are_you_sure_you_want_to_exit">Are you sure you want to exit?</string>
+    <string name="habit_will_not_be_saved">Habit will not be saved</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="upload_to_api">Upload to server</string>
@@ -49,9 +49,13 @@
     <string name="deleting_habbit">Deleting Habit</string>
     <string name="done">Done</string>
     <string name="You_should_do_this_habbit_toast">You should do this habit </string>
+    <string name="RGB" translatable="false">RGB - %1$s</string>
+    <string name="HSV" translatable="false">HSV - %1$s</string>
+    <string name="create">Create</string>
+    <string name="save">Save</string>
 
     <string-array name="priorities">
-        <item>Priority is not selected</item>
+        <item>No priority</item>
         <item>Low</item>
         <item>High</item>
     </string-array>
