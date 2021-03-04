@@ -21,20 +21,15 @@ import java.util.*
 
 class AddAndEditActivity : AppCompatActivity(), ColorPickerDialogFragment.IChangeColor {
 
-    companion object {
-        const val NEW_HABIT_INTENT_CODE = "new"
-        const val POSITION_INTENT_CODE = "position"
-        const val COLOR_CONFIG_CHANGE_CODE = "current color"
-        const val COLOR_NUM_CONFIG_CHANGE_CODE = "current color number"
-    }
-
     private var curColor: Int = Util.intColors[16]!!
     private var curColorNumber = ColorPickerDialogFragment.DEFAULT_COLOR
 
-    private lateinit var priorities: Array<String>
-    private lateinit var periods: Array<String>
-
-    private var curExtras: Bundle? = null
+    private val priorities: Array<String> by lazy{
+        applicationContext.resources.getStringArray(R.array.priorities)
+    }
+    private val periods: Array<String> by lazy {
+        applicationContext.resources.getStringArray(R.array.periods)
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,11 +37,6 @@ class AddAndEditActivity : AppCompatActivity(), ColorPickerDialogFragment.IChang
         setContentView(R.layout.activity_add_and_edit)
 
         setSupportActionBar(toolbarAddAndEdit)
-
-        priorities = applicationContext.resources.getStringArray(R.array.priorities)
-        periods = applicationContext.resources.getStringArray(R.array.periods)
-
-        curExtras = intent.extras
 
         if (intent.extras == null) {
             initAdding()
@@ -83,7 +73,7 @@ class AddAndEditActivity : AppCompatActivity(), ColorPickerDialogFragment.IChang
                     val intent = Intent(this, MainActivity::class.java).run {
                         putExtra(
                             NEW_HABIT_INTENT_CODE,
-                            intent.getSerializableExtra(MainActivity.HABIT_EDIT_INTENT_CODE) as Habit
+                            intent.getParcelableExtra<Habit>(MainActivity.HABIT_EDIT_INTENT_CODE)!!
                         )
                         putExtra(
                             POSITION_INTENT_CODE,
@@ -121,25 +111,29 @@ class AddAndEditActivity : AppCompatActivity(), ColorPickerDialogFragment.IChang
     private fun addHabit() {
         if (canAddOrEdit()) {
 
+            val newPriority = if (habitPriorityAddAndEdit.text.toString().isNotEmpty()) {
+                priorities.indexOf(habitPriorityAddAndEdit.text.toString())
+            } else {
+                0
+            }
+            val newCount = if (habitDoneAddEdit.text.toString() == "") {
+                0
+            } else {
+                habitDoneAddEdit.text.toString().toInt()
+            }
+            val newFrequency = if (habitPeriodAddAndEdit.text.toString().isNotEmpty()) {
+                periods.indexOf(habitPeriodAddAndEdit.text.toString())
+            } else {
+                2
+            }
+
             val newHabit = Habit(
                 title = habitNameAddAndEdit.text.toString(),
                 description = habitDescriptionAddAndEdit.text.toString(),
-                priority = if (habitPriorityAddAndEdit.text.toString().isNotEmpty()) {
-                    priorities.indexOf(habitPriorityAddAndEdit.text.toString())
-                } else {
-                    0
-                },
+                priority = newPriority,
                 type = radioButtonGood.isChecked.toInt(),
-                count = if (habitDoneAddEdit.text.toString() == "") {
-                    0
-                } else {
-                    habitDoneAddEdit.text.toString().toInt()
-                },
-                frequency = if (habitPeriodAddAndEdit.text.toString().isNotEmpty()) {
-                    periods.indexOf(habitPeriodAddAndEdit.text.toString())
-                } else {
-                    2
-                },
+                count = newCount,
+                frequency = newFrequency,
                 color = curColor,
                 date = Calendar.getInstance().time.time,
                 doneDates = mutableListOf()
@@ -156,43 +150,48 @@ class AddAndEditActivity : AppCompatActivity(), ColorPickerDialogFragment.IChang
     }
 
     private fun editHabit() {
+        if(canAddOrEdit()){
+            val habitToEdit = intent.getParcelableExtra<Habit>(MainActivity.HABIT_EDIT_INTENT_CODE)!!
+            val position = intent.getIntExtra(MainActivity.POSITION_INTENT_CODE, 0)
 
-        val habitToEdit = intent.getSerializableExtra(MainActivity.HABIT_EDIT_INTENT_CODE) as Habit
-        val position = intent.getIntExtra(MainActivity.POSITION_INTENT_CODE, 0)
-        println("position - $position")
-
-        val newHabit = Habit(
-            title = habitNameAddAndEdit.text.toString(),
-            description = habitDescriptionAddAndEdit.text.toString(),
-            priority = if (habitPriorityAddAndEdit.text.toString().isNotEmpty()) {
+            val newPriority = if (habitPriorityAddAndEdit.text.toString().isNotEmpty()) {
                 priorities.indexOf(habitPriorityAddAndEdit.text.toString())
             } else {
                 0
-            },
-            type = radioButtonGood.isChecked.toInt(),
-            count = if (habitDoneAddEdit.text.toString() == "") {
+            }
+            val newCount = if (habitDoneAddEdit.text.toString() == "") {
                 0
             } else {
                 habitDoneAddEdit.text.toString().toInt()
-            },
-            frequency = if (habitPeriodAddAndEdit.text.toString().isNotEmpty()) {
+            }
+            val newFrequency = if (habitPeriodAddAndEdit.text.toString().isNotEmpty()) {
                 periods.indexOf(habitPeriodAddAndEdit.text.toString())
             } else {
                 2
-            },
-            color = curColor,
-            date = habitToEdit.date,
-            doneDates = habitToEdit.doneDates
-        )
+            }
+
+            val newHabit = Habit(
+                title = habitNameAddAndEdit.text.toString(),
+                description = habitDescriptionAddAndEdit.text.toString(),
+                priority = newPriority,
+                type = radioButtonGood.isChecked.toInt(),
+                count = newCount,
+                frequency = newFrequency,
+                color = curColor,
+                date = habitToEdit.date,
+                doneDates = habitToEdit.doneDates
+            )
 
 
-        val intent = Intent(this, MainActivity::class.java).run {
-            putExtra(NEW_HABIT_INTENT_CODE, newHabit)
-            putExtra(POSITION_INTENT_CODE, position)
+            val intent = Intent(this, MainActivity::class.java).run {
+                putExtra(NEW_HABIT_INTENT_CODE, newHabit)
+                putExtra(POSITION_INTENT_CODE, position)
+            }
+
+            setResult(Activity.RESULT_OK, intent)
+            finish()
         }
 
-        setResult(Activity.RESULT_OK, intent)
-        finish()
     }
 
     private fun init() {
@@ -235,7 +234,7 @@ class AddAndEditActivity : AppCompatActivity(), ColorPickerDialogFragment.IChang
 
         toolbarAddAndEdit.setTitle(R.string.label_edit)
 
-        val habitToEdit = intent.getSerializableExtra(MainActivity.HABIT_EDIT_INTENT_CODE) as Habit
+        val habitToEdit = intent.getParcelableExtra<Habit>(MainActivity.HABIT_EDIT_INTENT_CODE) as Habit
 
         habitNameAddAndEdit.setText(habitToEdit.title)
         habitDescriptionAddAndEdit.setText((habitToEdit.description))
@@ -292,5 +291,12 @@ class AddAndEditActivity : AppCompatActivity(), ColorPickerDialogFragment.IChang
     private fun Boolean.toInt() = if (this) 1 else 0
 
     private fun Int.toBoolean(): Boolean = this == 1
+
+    companion object {
+        const val NEW_HABIT_INTENT_CODE = "new"
+        const val POSITION_INTENT_CODE = "position"
+        const val COLOR_CONFIG_CHANGE_CODE = "current color"
+        const val COLOR_NUM_CONFIG_CHANGE_CODE = "current color number"
+    }
 
 }

@@ -12,17 +12,17 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
-    companion object {
-        const val ADD_HABIT_INTENT_CODE = 12
-        const val EDIT_HABIT_INTENT_CODE = 13
-        const val POSITION_INTENT_CODE = "position"
-        const val HABIT_EDIT_INTENT_CODE = "object"
-        const val CONFIG_CHANGE_HABITS_CODE = "list of habits"
-        const val DISTANCE_BETWEEN_ELEMENTS = 50 //between elements in recyclerView
+    private val adapter: MainAdapter by lazy {
+        val data = ArrayList<Habit>()
+        MainAdapter(data, this) { habit, position ->
 
+            val intent = Intent(this, AddAndEditActivity::class.java).run {
+                putExtra(POSITION_INTENT_CODE, position)
+                putExtra(HABIT_EDIT_INTENT_CODE, habit)
+            }
+            startActivityForResult(intent, EDIT_HABIT_INTENT_CODE)
+        }
     }
-
-    lateinit var adapter: MainAdapter
     private var habits = arrayListOf<Habit>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,17 +31,6 @@ class MainActivity : AppCompatActivity() {
 
         setSupportActionBar(toolbarMainActivity)
 
-        val data = ArrayList<Habit>()
-
-        adapter = MainAdapter(data, this) { habit, position ->
-
-            val intent = Intent(this, AddAndEditActivity::class.java).run {
-                putExtra(POSITION_INTENT_CODE, position)
-                putExtra(HABIT_EDIT_INTENT_CODE, habit)
-            }
-            startActivityForResult(intent, EDIT_HABIT_INTENT_CODE)
-        }
-
         mainRecycler.addItemDecoration(
             SpacingItemDecoration(
                 DISTANCE_BETWEEN_ELEMENTS
@@ -49,12 +38,9 @@ class MainActivity : AppCompatActivity() {
         )
         mainRecycler.adapter = adapter
 
-
         mainFab.setOnClickListener {
             Intent(this, AddAndEditActivity::class.java).run {
-
                 startActivityForResult(this, ADD_HABIT_INTENT_CODE)
-
             }
 
         }
@@ -70,7 +56,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
 
-        habits = savedInstanceState.getSerializable(CONFIG_CHANGE_HABITS_CODE) as ArrayList<Habit>
+        habits =
+            savedInstanceState.getSerializable(CONFIG_CHANGE_HABITS_CODE) as ArrayList<Habit> //TODO as?
         if (habits.size != 0) {
             adapter.addListOfHabits(habits)
         }
@@ -80,17 +67,25 @@ class MainActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == ADD_HABIT_INTENT_CODE && resultCode == Activity.RESULT_OK) {
 
-            adapter.addItem(data?.getSerializableExtra(AddAndEditActivity.NEW_HABIT_INTENT_CODE) as Habit)
-            adapter.notifyItemInserted(adapter.itemCount - 1)
+            adapter.addItem(data?.getParcelableExtra(AddAndEditActivity.NEW_HABIT_INTENT_CODE)!!)
         } else if (requestCode == EDIT_HABIT_INTENT_CODE) {
             adapter.changeItem(
-                data?.getSerializableExtra(AddAndEditActivity.NEW_HABIT_INTENT_CODE) as Habit,
-                data.getIntExtra(AddAndEditActivity.POSITION_INTENT_CODE,0)
+                data?.getParcelableExtra(AddAndEditActivity.NEW_HABIT_INTENT_CODE)!!,
+                data.getIntExtra(AddAndEditActivity.POSITION_INTENT_CODE, 0)
             )
         } else {
             super.onActivityResult(requestCode, resultCode, data)
         }
     }
 
+    companion object {
+        const val ADD_HABIT_INTENT_CODE = 12
+        const val EDIT_HABIT_INTENT_CODE = 13
+        const val POSITION_INTENT_CODE = "position"
+        const val HABIT_EDIT_INTENT_CODE = "object"
+        const val CONFIG_CHANGE_HABITS_CODE = "list of habits"
+        const val DISTANCE_BETWEEN_ELEMENTS = 50 //between elements in recyclerView
+
+    }
 
 }

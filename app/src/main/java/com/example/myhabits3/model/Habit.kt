@@ -1,7 +1,9 @@
 package com.example.myhabits3.model
 
-import java.io.Serializable
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
 
+@Parcelize
 data class Habit(
     var title: String,
     var description: String,
@@ -12,4 +14,4 @@ data class Habit(
     var color: Int,
     var date: Long,
     var doneDates: MutableList<Long>
-) : Serializable
+) : Parcelable

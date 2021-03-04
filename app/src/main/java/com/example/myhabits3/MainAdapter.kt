@@ -33,6 +33,7 @@ class MainAdapter(
 
     fun addItem(hab: Habit) {
         habits.add(hab)
+        notifyItemInserted(itemCount - 1)
     }
 
     fun changeItem(hab: Habit, pos: Int) {
@@ -51,7 +52,6 @@ class MainAdapter(
         fun bind(habit: Habit, position: Int) {
 
             containerView.run {
-
 
                 constraintMainRecyclerElement.setOnClickListener {
                     adapterOnClickConstraint(habit, position)
