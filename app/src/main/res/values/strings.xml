@@ -7,6 +7,7 @@
     <string name="filter_type">Filter type</string>
     <string name="search">Search</string>
     <string name="app_my_habits">Application \"My Habits\"</string>
+    <string name="about_app">About app</string>
     <string name="author_alex_romanov">Author - Alex Romanov</string>
     <string name="github" translatable="false">GitHub - https://github.com/romanovAl</string>
     <string name="email">Email - ml.naslednik2001@gmail.com</string>

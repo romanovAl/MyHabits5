@@ -1,19 +1,21 @@
-package com.example.myhabits3
+package com.example.myhabits3.adapters
 
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
+import com.example.myhabits3.R
+import com.example.myhabits3.fragments.MainFragmentDirections
 import com.example.myhabits3.model.Habit
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.main_recycler_element.view.*
 
 
 class MainAdapter(
-    var habits: ArrayList<Habit>,
-    context: Context,
-    val adapterOnClickConstraint: (Habit, Int) -> Unit
+    private var habits: MutableList<Habit>,
+    context: Context
 ) : RecyclerView.Adapter<MainAdapter.ViewHolder>() {
 
     private val priorities = context.resources.getStringArray(R.array.priorities)
@@ -28,20 +30,10 @@ class MainAdapter(
     override fun getItemCount(): Int = habits.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(habits[position], position)
+        holder.bind(habits[position])
     }
 
-    fun addItem(hab: Habit) {
-        habits.add(hab)
-        notifyItemInserted(itemCount - 1)
-    }
-
-    fun changeItem(hab: Habit, pos: Int) {
-        habits[pos] = hab
-        notifyItemChanged(pos)
-    }
-
-    fun addListOfHabits(newHabits : ArrayList<Habit>){
+    fun addListOfHabits(newHabits: MutableList<Habit>) {
         habits = newHabits
         notifyDataSetChanged()
     }
@@ -49,12 +41,17 @@ class MainAdapter(
     inner class ViewHolder(override val containerView: View) :
         RecyclerView.ViewHolder(containerView), LayoutContainer {
 
-        fun bind(habit: Habit, position: Int) {
+        fun bind(habit: Habit) {
 
             containerView.run {
 
                 constraintMainRecyclerElement.setOnClickListener {
-                    adapterOnClickConstraint(habit, position)
+                    val action = MainFragmentDirections.actionFragmentMainToFragmentAddEdit(
+                        context.resources.getString(R.string.label_edit)
+                    )
+                    action.habitToEdit = habit
+
+                    Navigation.findNavController(it).navigate(action)
                 }
 
                 habitNameRecyclerElement.text = habit.title
@@ -72,12 +69,6 @@ class MainAdapter(
                     else -> priorities[0]
                 }
                 habitColorDivider.setBackgroundColor(habit.color)
-
-                habitTypeRecyclerElement.text = if (habit.type == 1) {
-                    this.resources.getText(R.string.good_habit)
-                } else {
-                    this.resources.getText(R.string.bad_habit)
-                } //TODO когда появится viewPager, убрать отображение типа привычки
 
             }
 

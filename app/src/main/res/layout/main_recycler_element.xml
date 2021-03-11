@@ -57,21 +57,7 @@
         app:layout_constraintTop_toBottomOf="@+id/habitNameCard"
         tools:text="Описание такое длинненькое описание ммм" />
 
-    <TextView
-        android:id="@+id/habitTypeRecyclerElement"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:background="@drawable/rounded_corner_filled"
-        android:fontFamily="@font/roboto_mono"
-        android:padding="8dp"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/habitPriorityRecyclerElement"
-        app:layout_constraintTop_toBottomOf="@+id/habitPriorityRecyclerElement"
-        tools:text="Тип" />
+
 
     <TextView
         android:id="@+id/habitPriorityRecyclerElement"
@@ -103,8 +89,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/habitTypeRecyclerElement"
-        app:layout_constraintTop_toBottomOf="@+id/habitTypeRecyclerElement"
+        app:layout_constraintStart_toStartOf="@+id/habitPriorityRecyclerElement"
+        app:layout_constraintTop_toBottomOf="@+id/habitPriorityRecyclerElement"
         tools:text="Периодичность" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

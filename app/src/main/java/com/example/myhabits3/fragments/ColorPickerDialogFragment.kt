@@ -1,4 +1,4 @@
-package com.example.myhabits3
+package com.example.myhabits3.fragments
 
 import android.content.res.ColorStateList
 import android.os.Bundle
@@ -6,12 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
+import com.example.myhabits3.R
 import com.example.myhabits3.model.Util
 import kotlinx.android.synthetic.main.color_picker_dialog_fragment.*
 import kotlinx.android.synthetic.main.color_picker_dialog_fragment.view.*
 
-class ColorPickerDialogFragment : DialogFragment() {
-
+class ColorPickerDialogFragment(private val event: (Int, Int) -> Unit) : DialogFragment() {
 
 
     private val listOfRgb: Array<String> by lazy {
@@ -19,9 +19,6 @@ class ColorPickerDialogFragment : DialogFragment() {
     }
     private val listOfHsv: Array<String> by lazy {
         requireContext().resources.getStringArray(R.array.hsvs)
-    }
-    private val iChangeColor: IChangeColor by lazy {
-        activity as IChangeColor
     }
 
     var color: Int = 0
@@ -46,7 +43,7 @@ class ColorPickerDialogFragment : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        val curColorNumber = arguments!!.getInt(COLOR_NUMBER_BUNDLE_ARG)
+        val curColorNumber = requireArguments().getInt(COLOR_NUMBER_BUNDLE_ARG)
 
         if (curColorNumber != DEFAULT_COLOR) {
             choseColor(curColorNumber)
@@ -60,81 +57,25 @@ class ColorPickerDialogFragment : DialogFragment() {
 
         view.apply {
             val colorCards = mutableListOf<View>(
-                colorCard1,colorCard2,colorCard3,colorCard4,colorCard5,colorCard6,
-                colorCard7,colorCard8,colorCard9,colorCard10,colorCard11,colorCard12,
-                colorCard13,colorCard14,colorCard15,colorCard16
+                colorCard1, colorCard2, colorCard3, colorCard4, colorCard5, colorCard6,
+                colorCard7, colorCard8, colorCard9, colorCard10, colorCard11, colorCard12,
+                colorCard13, colorCard14, colorCard15, colorCard16
             )
 
-            for (i in 0 until colorCards.size){
+            for (i in 0 until colorCards.size) {
                 colorCards[i].setOnClickListener {
                     choseColor(i)
                 }
             }
-//
-//            colorCard1.setOnClickListener {
-//                choseColor(0)
-//            }
-//            colorCard2.setOnClickListener {
-//                choseColor(1)
-//            }
-//            colorCard3.setOnClickListener {
-//                choseColor(2)
-//            }
-//            colorCard4.setOnClickListener {
-//                choseColor(3)
-//            }
-//            colorCard5.setOnClickListener {
-//                choseColor(4)
-//            }
-//            colorCard6.setOnClickListener {
-//                choseColor(5)
-//            }
-//            colorCard7.setOnClickListener {
-//                choseColor(6)
-//            }
-//            colorCard8.setOnClickListener {
-//                choseColor(7)
-//            }
-//            colorCard9.setOnClickListener {
-//                choseColor(8)
-//            }
-//            colorCard10.setOnClickListener {
-//                choseColor(9)
-//            }
-//            colorCard11.setOnClickListener {
-//                choseColor(10)
-//            }
-//            colorCard12.setOnClickListener {
-//                choseColor(11)
-//            }
-//            colorCard13.setOnClickListener {
-//                choseColor(12)
-//            }
-//            colorCard14.setOnClickListener {
-//                choseColor(13)
-//            }
-//            colorCard15.setOnClickListener {
-//                choseColor(14)
-//            }
-//            colorCard16.setOnClickListener {
-//                choseColor(15)
-//            }
 
             applyColorButton.setOnClickListener {
-                iChangeColor.onChangeColor(
-                    curColorForCard,
-                    this@ColorPickerDialogFragment.curColorNumber
-                )
+                event(curColorForCard, this@ColorPickerDialogFragment.curColorNumber)
                 dismiss()
             }
 
         }
 
         super.onViewCreated(view, savedInstanceState)
-    }
-
-    interface IChangeColor {
-        fun onChangeColor(newColor: Int, newColorNumber: Int)
     }
 
 
@@ -152,11 +93,10 @@ class ColorPickerDialogFragment : DialogFragment() {
             requireContext().getString(R.string.HSV, listOfHsv[colorNumber])
 
         val checkedColors = arrayOf(
-            checkedColor1, checkedColor2, checkedColor3,
-            checkedColor4, checkedColor5, checkedColor6, checkedColor7,
-            checkedColor8, checkedColor9, checkedColor10, checkedColor11,
-            checkedColor12, checkedColor13, checkedColor14, checkedColor15,
-            checkedColor16,
+            checkedColor1, checkedColor2, checkedColor3, checkedColor4,
+            checkedColor5, checkedColor6, checkedColor7, checkedColor8,
+            checkedColor9, checkedColor10, checkedColor11, checkedColor12,
+            checkedColor13, checkedColor14, checkedColor15, checkedColor16,
         )
 
         checkedColors.forEach { it.visibility = INVISIBLE }
@@ -175,13 +115,13 @@ class ColorPickerDialogFragment : DialogFragment() {
         const val INVISIBLE = View.INVISIBLE
 
 
-        fun newInstance(curColorNumber: Int): ColorPickerDialogFragment {
-
+        fun newInstance(curColorNumber: Int, event: (Int, Int) -> Unit): ColorPickerDialogFragment {
             val args = Bundle().apply {
                 putInt(COLOR_NUMBER_BUNDLE_ARG, curColorNumber)
             }
-            val fragment = ColorPickerDialogFragment()
+            val fragment = ColorPickerDialogFragment(event)
             fragment.arguments = args
+
             return fragment
         }
 

@@ -71,5 +71,6 @@
     <string name="save">Сохранить</string>
     <string name="are_you_sure_you_want_to_exit">Вы уверены, что хотите выйти?</string>
     <string name="habit_will_not_be_saved">Привычка не будет сохранена</string>
+    <string name="about_app">О приложении</string>
 
 </resources>

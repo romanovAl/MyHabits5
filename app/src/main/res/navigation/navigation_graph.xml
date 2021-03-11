@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/my_navigation_graph"
+    app:startDestination="@id/fragmentMain">
+    <fragment
+        android:id="@+id/fragmentMain"
+        android:name="com.example.myhabits3.fragments.MainFragment"
+        android:label="My habits"
+        tools:layout="@layout/fragment_main" >
+        <action
+            android:id="@+id/action_fragmentMain_to_fragmentAddEdit"
+            app:destination="@id/fragmentAddEdit" />
+        <argument
+            android:name="EditOrAddedHabit"
+            app:argType="com.example.myhabits3.model.Habit"
+            app:nullable="true"
+            android:defaultValue="@null" />
+        <action
+            android:id="@+id/action_fragmentMain_to_fragmentAbout"
+            app:destination="@id/aboutFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragmentAddEdit"
+        android:name="com.example.myhabits3.fragments.FragmentAddEdit"
+        android:label="{dynamicTitle}"
+        tools:layout="@layout/fragment_add_edit" >
+        <argument
+            android:name="habitToEdit"
+            app:argType="com.example.myhabits3.model.Habit"
+            app:nullable="true"
+            android:defaultValue="@null" />
+        <argument
+            android:name="dynamicTitle"
+            app:argType="string"/>
+        <action
+            android:id="@+id/action_fragmentAddEdit_to_fragmentMain"
+            app:destination="@id/fragmentMain"/>
+    </fragment>
+    <fragment
+        android:id="@+id/aboutFragment"
+        android:name="com.example.myhabits3.fragments.FragmentAbout"
+        android:label="@string/about_app"
+        tools:layout="@layout/fragment_about" />
+</navigation>
