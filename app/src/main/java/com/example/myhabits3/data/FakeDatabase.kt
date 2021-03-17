@@ -1,5 +1,6 @@
 package com.example.myhabits3.data
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.myhabits3.model.Habit
 
@@ -7,7 +8,8 @@ class FakeDatabase {
 
     companion object {
 
-        var habitsLiveData: MutableLiveData<MutableList<Habit>> = MutableLiveData()
+        private val habitsLiveData: MutableLiveData<MutableList<Habit>> = MutableLiveData()
+        val habits: LiveData<MutableList<Habit>> get() = habitsLiveData
 
         init {
             habitsLiveData.value = mutableListOf()
@@ -18,12 +20,11 @@ class FakeDatabase {
         }
 
         fun replaceHabit(oldHabit: Habit, newHabit: Habit) {
-            habitsLiveData.value?.let{value ->
+            habitsLiveData.value?.let { value ->
                 val index = value.indexOf(oldHabit)
                 value.removeAt(index)
-                value.add(index,newHabit)
+                value.add(index, newHabit)
             }
-
         }
 
     }

@@ -8,10 +8,14 @@ import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import androidx.navigation.navGraphViewModels
+import com.example.myhabits3.viewModels.AddEditViewModel
+import com.example.myhabits3.viewModels.AddEditViewModelFactory
+import com.example.myhabits3.viewModels.MainViewModel
 import com.example.myhabits3.R
-import com.example.myhabits3.data.FakeDatabase
 import com.example.myhabits3.model.Habit
 import com.example.myhabits3.model.Util
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -35,6 +39,12 @@ class FragmentAddEdit : Fragment(R.layout.fragment_add_edit) {
     private val navController: NavController by lazy {
         Navigation.findNavController(requireView())
     }
+    private val mainViewModel: MainViewModel by lazy {
+        ViewModelProvider(this, defaultViewModelProviderFactory).get(MainViewModel::class.java)
+    }
+    private val addEditViewModel by navGraphViewModels<AddEditViewModel>(R.id.my_navigation_graph) {
+        AddEditViewModelFactory()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -55,14 +65,23 @@ class FragmentAddEdit : Fragment(R.layout.fragment_add_edit) {
                 .show()
         }
 
-
-
         return super.onCreateView(inflater, container, savedInstanceState)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         init()
         super.onViewCreated(view, savedInstanceState)
+    }
+
+    override fun onResume() {
+        val adapterPriority = ArrayAdapter(requireContext(), R.layout.list_item, priorities)
+        (habitPriorityInputLayout.editText as? AutoCompleteTextView)?.setAdapter(adapterPriority)
+        habitPriorityAddAndEdit.keyListener = null
+
+        val adapterPeriod = ArrayAdapter(requireContext(), R.layout.list_item, periods)
+        (habitPeriodInputLayout.editText as? AutoCompleteTextView)?.setAdapter(adapterPeriod)
+        habitPeriodAddAndEdit.keyListener = null
+        super.onResume()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -76,25 +95,6 @@ class FragmentAddEdit : Fragment(R.layout.fragment_add_edit) {
             true
         }
         else -> super.onOptionsItemSelected(item)
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-
-        outState.putInt(COLOR_CONFIG_CHANGE_CODE, curColor)
-        outState.putInt(COLOR_NUM_CONFIG_CHANGE_CODE, curColorNumber)
-
-        super.onSaveInstanceState(outState)
-    }
-
-    override fun onViewStateRestored(savedInstanceState: Bundle?) {
-
-        savedInstanceState?.let { it ->
-            curColor = it.getInt(COLOR_CONFIG_CHANGE_CODE)
-            curColorNumber = it.getInt(COLOR_NUM_CONFIG_CHANGE_CODE)
-            curColorImageView.setColorFilter(curColor)
-        }
-
-        super.onViewStateRestored(savedInstanceState)
     }
 
 
@@ -135,13 +135,14 @@ class FragmentAddEdit : Fragment(R.layout.fragment_add_edit) {
             )
 
             if (habitToEdit != null) {
-                FakeDatabase.replaceHabit(habitToEdit!!, newHabit)
+                mainViewModel.replaceHabit(habitToEdit!!, newHabit)
             } else {
-                FakeDatabase.addHabit(newHabit)
+                mainViewModel.addHabit(newHabit)
             }
 
             requireView().hideKeyboard()
 
+            addEditViewModel.clear()
             navController.popBackStack()
         }
     }
@@ -170,10 +171,18 @@ class FragmentAddEdit : Fragment(R.layout.fragment_add_edit) {
         return isAble
     }
 
-
     private fun init() {
 
-        habitToEdit?.let{
+        addEditViewModel.colorPair.observe(viewLifecycleOwner, { colorPair ->
+
+            colorPair?.let {
+                curColor = it.first
+                curColorNumber = it.second
+                curColorImageView.setColorFilter(it.first)
+            }
+        })
+
+        habitToEdit?.let {
             habitNameAddAndEdit.setText(it.title)
             habitDescriptionAddAndEdit.setText((it.description))
 
@@ -189,18 +198,10 @@ class FragmentAddEdit : Fragment(R.layout.fragment_add_edit) {
             habitPeriodAddAndEdit.setText(periods[it.frequency])
 
             curColor = it.color
+            curColorNumber = Util.getColorNumberByColor(it.color)
 
-            curColorImageView.setColorFilter(it.color)
+
         }
-
-
-        val adapterPriority = ArrayAdapter(requireContext(), R.layout.list_item, priorities)
-        (habitPriorityInputLayout.editText as? AutoCompleteTextView)?.setAdapter(adapterPriority)
-        habitPriorityAddAndEdit.keyListener = null
-
-        val adapterPeriod = ArrayAdapter(requireContext(), R.layout.list_item, periods)
-        (habitPeriodInputLayout.editText as? AutoCompleteTextView)?.setAdapter(adapterPeriod)
-        habitPeriodAddAndEdit.keyListener = null
 
         colorPickerButton.setOnClickListener {
             colorPickersOnClick()
@@ -214,14 +215,10 @@ class FragmentAddEdit : Fragment(R.layout.fragment_add_edit) {
 
     private fun colorPickersOnClick() {
 
-        ColorPickerDialogFragment.newInstance(Util.getColorNumberByColor(curColor)) { newColor, newColorNumber ->
-
-            curColor = newColor
-            curColorNumber = newColorNumber
-
-            curColorImageView.setColorFilter(newColor)
-        }
+        ColorPickerDialogFragment.newInstance()
             .show(parentFragmentManager, ColorPickerDialogFragment.TAG)
+
+        addEditViewModel.setColorPair(curColor, curColorNumber)
 
     }
 
@@ -233,11 +230,6 @@ class FragmentAddEdit : Fragment(R.layout.fragment_add_edit) {
     private fun View.hideKeyboard() {
         val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(windowToken, 0)
-    }
-
-    companion object {
-        const val COLOR_CONFIG_CHANGE_CODE = "current color"
-        const val COLOR_NUM_CONFIG_CHANGE_CODE = "current color number"
     }
 
 }

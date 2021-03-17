@@ -7,11 +7,15 @@
     <fragment
         android:id="@+id/fragmentMain"
         android:name="com.example.myhabits3.fragments.MainFragment"
-        android:label="My habits"
+        android:label="@string/app_name"
         tools:layout="@layout/fragment_main" >
         <action
             android:id="@+id/action_fragmentMain_to_fragmentAddEdit"
-            app:destination="@id/fragmentAddEdit" />
+            app:destination="@id/fragmentAddEdit"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
         <argument
             android:name="EditOrAddedHabit"
             app:argType="com.example.myhabits3.model.Habit"
@@ -19,7 +23,9 @@
             android:defaultValue="@null" />
         <action
             android:id="@+id/action_fragmentMain_to_fragmentAbout"
-            app:destination="@id/aboutFragment" />
+            app:destination="@id/aboutFragment"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
     <fragment
         android:id="@+id/fragmentAddEdit"
@@ -34,9 +40,6 @@
         <argument
             android:name="dynamicTitle"
             app:argType="string"/>
-        <action
-            android:id="@+id/action_fragmentAddEdit_to_fragmentMain"
-            app:destination="@id/fragmentMain"/>
     </fragment>
     <fragment
         android:id="@+id/aboutFragment"

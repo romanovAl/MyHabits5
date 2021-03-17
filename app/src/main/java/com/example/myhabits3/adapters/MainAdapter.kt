@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.Navigation
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myhabits3.R
 import com.example.myhabits3.fragments.MainFragmentDirections
@@ -29,14 +30,17 @@ class MainAdapter(
 
     override fun getItemCount(): Int = habits.size
 
+    fun setData(newHabits: MutableList<Habit>){
+        val diffUtil = DiffUtilMainRecycler(habits,newHabits)
+        val diffResults = DiffUtil.calculateDiff(diffUtil)
+        habits = newHabits
+        diffResults.dispatchUpdatesTo(this)
+    }
+
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(habits[position])
     }
 
-    fun addListOfHabits(newHabits: MutableList<Habit>) {
-        habits = newHabits
-        notifyDataSetChanged()
-    }
 
     inner class ViewHolder(override val containerView: View) :
         RecyclerView.ViewHolder(containerView), LayoutContainer {

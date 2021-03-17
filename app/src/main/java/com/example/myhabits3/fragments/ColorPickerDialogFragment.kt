@@ -6,12 +6,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
+import androidx.navigation.navGraphViewModels
+import com.example.myhabits3.viewModels.AddEditViewModel
+import com.example.myhabits3.viewModels.AddEditViewModelFactory
 import com.example.myhabits3.R
 import com.example.myhabits3.model.Util
 import kotlinx.android.synthetic.main.color_picker_dialog_fragment.*
 import kotlinx.android.synthetic.main.color_picker_dialog_fragment.view.*
 
-class ColorPickerDialogFragment(private val event: (Int, Int) -> Unit) : DialogFragment() {
+class ColorPickerDialogFragment() : DialogFragment() {
 
 
     private val listOfRgb: Array<String> by lazy {
@@ -19,6 +22,9 @@ class ColorPickerDialogFragment(private val event: (Int, Int) -> Unit) : DialogF
     }
     private val listOfHsv: Array<String> by lazy {
         requireContext().resources.getStringArray(R.array.hsvs)
+    }
+    private val addEditViewModel by navGraphViewModels<AddEditViewModel>(R.id.my_navigation_graph) {
+        AddEditViewModelFactory()
     }
 
     var color: Int = 0
@@ -43,17 +49,20 @@ class ColorPickerDialogFragment(private val event: (Int, Int) -> Unit) : DialogF
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        val curColorNumber = requireArguments().getInt(COLOR_NUMBER_BUNDLE_ARG)
-
-        if (curColorNumber != DEFAULT_COLOR) {
-            choseColor(curColorNumber)
-        } else {
-            choseColor(DEFAULT_COLOR)
-        }
+        addEditViewModel.colorPair.observe(viewLifecycleOwner, { pairColor ->
+            if (pairColor != null) {
+                println("Пришло 1")
+                choseColor(pairColor.second)
+            } else {
+                println("Пришло 2")
+                choseColor(DEFAULT_COLOR)
+            }
+        })
 
         defaultColorButton.setOnClickListener {
             choseColor(DEFAULT_COLOR)
         }
+
 
         view.apply {
             val colorCards = mutableListOf<View>(
@@ -69,7 +78,8 @@ class ColorPickerDialogFragment(private val event: (Int, Int) -> Unit) : DialogF
             }
 
             applyColorButton.setOnClickListener {
-                event(curColorForCard, this@ColorPickerDialogFragment.curColorNumber)
+                println("CurColor - $curColorForCard, curColorNumber - $curColorNumber")
+                addEditViewModel.setColorPair(curColorForCard, curColorNumber)
                 dismiss()
             }
 
@@ -109,21 +119,12 @@ class ColorPickerDialogFragment(private val event: (Int, Int) -> Unit) : DialogF
     companion object {
 
         const val TAG = "ColorPicker"
-        const val COLOR_NUMBER_BUNDLE_ARG = "curColorNumber"
         const val DEFAULT_COLOR = 16
         const val VISIBLE = View.VISIBLE
         const val INVISIBLE = View.INVISIBLE
 
 
-        fun newInstance(curColorNumber: Int, event: (Int, Int) -> Unit): ColorPickerDialogFragment {
-            val args = Bundle().apply {
-                putInt(COLOR_NUMBER_BUNDLE_ARG, curColorNumber)
-            }
-            val fragment = ColorPickerDialogFragment(event)
-            fragment.arguments = args
-
-            return fragment
-        }
+        fun newInstance(): ColorPickerDialogFragment = ColorPickerDialogFragment()
 
     }
 
