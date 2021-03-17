@@ -6,9 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
-import androidx.navigation.navGraphViewModels
+import androidx.fragment.app.activityViewModels
 import com.example.myhabits3.viewModels.AddEditViewModel
-import com.example.myhabits3.viewModels.AddEditViewModelFactory
 import com.example.myhabits3.R
 import com.example.myhabits3.model.Util
 import kotlinx.android.synthetic.main.color_picker_dialog_fragment.*
@@ -23,9 +22,7 @@ class ColorPickerDialogFragment() : DialogFragment() {
     private val listOfHsv: Array<String> by lazy {
         requireContext().resources.getStringArray(R.array.hsvs)
     }
-    private val addEditViewModel by navGraphViewModels<AddEditViewModel>(R.id.my_navigation_graph) {
-        AddEditViewModelFactory()
-    }
+    private val addEditViewModel : AddEditViewModel by activityViewModels()
 
     var color: Int = 0
     private var colors = Util.intColors
