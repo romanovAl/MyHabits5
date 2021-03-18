@@ -3,7 +3,7 @@ package com.example.myhabits3.fragments
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
 import com.example.myhabits3.viewModels.MainViewModel
 import com.example.myhabits3.R
 import com.example.myhabits3.adapters.MainAdapter
@@ -18,9 +18,7 @@ class FragmentGoodHabits : Fragment(R.layout.fragment_good_habits) {
         MainAdapter(data, requireContext())
     }
 
-    private val viewModel: MainViewModel by lazy {
-        ViewModelProvider(this, defaultViewModelProviderFactory).get(MainViewModel::class.java)
-    }
+    private val viewModel: MainViewModel by activityViewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
@@ -31,18 +29,11 @@ class FragmentGoodHabits : Fragment(R.layout.fragment_good_habits) {
             )
         )
 
-        viewModel.sortedHabits.observe(viewLifecycleOwner, { sortedHabits ->
-
-            viewModel.habits.observe(viewLifecycleOwner, { habits ->
-                if (sortedHabits.isNotEmpty()) {
-                    adapter.setData(sortedHabits.filter { it.type.toBoolean() } as MutableList)
-                } else {
-                    adapter.setData(habits.filter { it.type.toBoolean() } as MutableList)
-                }
-            })
-
+        viewModel.currentHabits.observe(viewLifecycleOwner, { habits ->
+            habits?.let { list ->
+                adapter.setData(list.filter { it.type.toBoolean() } as MutableList<Habit>)
+            }
         })
-
 
         super.onViewCreated(view, savedInstanceState)
     }

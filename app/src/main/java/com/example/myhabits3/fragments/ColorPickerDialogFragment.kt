@@ -48,10 +48,8 @@ class ColorPickerDialogFragment() : DialogFragment() {
 
         addEditViewModel.colorPair.observe(viewLifecycleOwner, { pairColor ->
             if (pairColor != null) {
-                println("Пришло 1")
                 choseColor(pairColor.second)
             } else {
-                println("Пришло 2")
                 choseColor(DEFAULT_COLOR)
             }
         })
@@ -75,7 +73,6 @@ class ColorPickerDialogFragment() : DialogFragment() {
             }
 
             applyColorButton.setOnClickListener {
-                println("CurColor - $curColorForCard, curColorNumber - $curColorNumber")
                 addEditViewModel.setColorPair(curColorForCard, curColorNumber)
                 dismiss()
             }

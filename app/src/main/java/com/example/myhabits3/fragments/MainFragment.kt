@@ -10,13 +10,13 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.example.myhabits3.viewModels.MainViewModel
 import com.example.myhabits3.R
 import com.example.myhabits3.adapters.ViewPagerAdapter
-import com.example.myhabits3.model.Habit
+import com.example.myhabits3.model.FilterTypes
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.android.synthetic.main.bottom_sheet_main_fragment.*
@@ -28,9 +28,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         Navigation.findNavController(requireView())
     }
 
-    private val viewModel: MainViewModel by lazy {
-        ViewModelProvider(this, defaultViewModelProviderFactory).get(MainViewModel::class.java)
-    }
+    private val viewModel: MainViewModel by activityViewModels()
 
     private val filterTypes by lazy {
         resources.getStringArray(R.array.filterTypes)
@@ -68,7 +66,6 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         return true
     }
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         viewPager2.adapter = ViewPagerAdapter(this)
@@ -85,36 +82,13 @@ class MainFragment : Fragment(R.layout.fragment_main) {
             navController.navigate(action)
         }
 
-
-        var sortedHabits: List<Habit>? = null
-        var currentSortedHabits: List<Habit>? = null
-
-        viewModel.habits.observe(viewLifecycleOwner, {
-            sortedHabits = it
-            currentSortedHabits = it
-        })
-
         filterFind.addTextChangedListener(object : TextWatcher {
 
             override fun afterTextChanged(text: Editable?) {
-
                 if (text != null) {
-
-                    if (text.isEmpty()) {
-                        currentSortedHabits = sortedHabits
-
-                        if (currentSortedHabits != null) {
-                            viewModel.setSortedHabits(currentSortedHabits!!)
-                        }
-                    } else {
-                        currentSortedHabits = sortedHabits?.filter {
-                            it.title.contains(text.toString(), ignoreCase = true)
-                        }
-
-                        if (currentSortedHabits != null) {
-                            viewModel.setSortedHabits(currentSortedHabits!!)
-                        }
-                    }
+                    viewModel.sortHabits(text.toString())
+                } else {
+                    viewModel.cleanHabitsFilter()
                 }
             }
 
@@ -132,37 +106,19 @@ class MainFragment : Fragment(R.layout.fragment_main) {
             when (filterTypeSpinner.text.toString()) {
 
                 filterTypes[0] -> { //По приоритету
-
-                    currentSortedHabits = currentSortedHabits?.sortedByDescending { it.priority }
-                    if (currentSortedHabits != null) {
-                        viewModel.setSortedHabits(currentSortedHabits!!)
-                    }
-
+                    viewModel.sortHabits(FilterTypes.ByPriority, true)
                 }
 
                 filterTypes[1] -> { //По периоду
-                    currentSortedHabits = currentSortedHabits?.sortedByDescending { it.frequency }
-
-                    if (currentSortedHabits != null) {
-                        viewModel.setSortedHabits(currentSortedHabits!!)
-                    }
+                    viewModel.sortHabits(FilterTypes.ByPeriod, true)
                 }
 
                 filterTypes[2] -> { //По количеству раз
-                    currentSortedHabits = currentSortedHabits?.sortedByDescending { it.count }
-
-                    if (currentSortedHabits != null) {
-                        viewModel.setSortedHabits(currentSortedHabits!!)
-                    }
-
+                    viewModel.sortHabits(FilterTypes.ByCount, true)
                 }
 
                 filterTypes[3] -> {//По дате
-                    currentSortedHabits = currentSortedHabits?.sortedByDescending { it.date }
-
-                    if (currentSortedHabits != null) {
-                        viewModel.setSortedHabits(currentSortedHabits!!)
-                    }
+                    viewModel.sortHabits(FilterTypes.ByDate, true)
                 }
 
             }
@@ -176,34 +132,19 @@ class MainFragment : Fragment(R.layout.fragment_main) {
             when (filterTypeSpinner.text.toString()) {
 
                 filterTypes[0] -> { //По приоритету
-
-                    currentSortedHabits = currentSortedHabits?.sortedBy { it.priority }
-
-                    if (currentSortedHabits != null) {
-                        viewModel.setSortedHabits(currentSortedHabits!!)
-                    }
-
+                    viewModel.sortHabits(FilterTypes.ByPriority, false)
                 }
 
                 filterTypes[1] -> { //По периоду
-                    currentSortedHabits = currentSortedHabits?.sortedBy { it.frequency }
-                    if (currentSortedHabits != null) {
-                        viewModel.setSortedHabits(currentSortedHabits!!)
-                    }
+                    viewModel.sortHabits(FilterTypes.ByPeriod, false)
                 }
 
                 filterTypes[2] -> { //По количеству раз
-                    currentSortedHabits = currentSortedHabits?.sortedBy { it.count }
-                    if (currentSortedHabits != null) {
-                        viewModel.setSortedHabits(currentSortedHabits!!)
-                    }
+                    viewModel.sortHabits(FilterTypes.ByCount, false)
                 }
 
                 filterTypes[3] -> {//По дате
-                    currentSortedHabits = currentSortedHabits?.sortedBy { it.date }
-                    if (currentSortedHabits != null) {
-                        viewModel.setSortedHabits(currentSortedHabits!!)
-                    }
+                    viewModel.sortHabits(FilterTypes.ByDate, false)
                 }
 
             }
@@ -212,14 +153,12 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         filterTypeSpinner.onItemClickListener = AdapterView.OnItemClickListener()
         { _, _, p, _ ->
 
-            if (p == 4) {
+            if (p == 4) { //Без фильтра
 
                 filterSortUp.setImageResource(R.drawable.ic_baseline_arrow_upward_24)
                 filterSortDown.setImageResource(R.drawable.ic_baseline_arrow_downward_24)
 
-
-                viewModel.setSortedHabits(emptyList())
-                //TODO сделать поле неактивным
+                viewModel.cleanHabitsFilter()
 
             }
 

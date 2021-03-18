@@ -9,7 +9,6 @@ import android.widget.AutoCompleteTextView
 import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.example.myhabits3.viewModels.AddEditViewModel
@@ -38,9 +37,8 @@ class FragmentAddEdit : Fragment(R.layout.fragment_add_edit) {
     private val navController: NavController by lazy {
         Navigation.findNavController(requireView())
     }
-    private val mainViewModel: MainViewModel by lazy {
-        ViewModelProvider(this, defaultViewModelProviderFactory).get(MainViewModel::class.java)
-    }
+    private val mainViewModel: MainViewModel by activityViewModels()
+
     private val addEditViewModel : AddEditViewModel by activityViewModels()
 
 

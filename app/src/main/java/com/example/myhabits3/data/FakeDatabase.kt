@@ -8,23 +8,16 @@ class FakeDatabase {
 
     companion object {
 
-        private val habitsLiveData: MutableLiveData<MutableList<Habit>> = MutableLiveData()
-        val habits: LiveData<MutableList<Habit>> get() = habitsLiveData
-
-        init {
-            habitsLiveData.value = mutableListOf()
-        }
+        val habitsList : MutableList<Habit> = mutableListOf()
 
         fun addHabit(newHabit: Habit) {
-            habitsLiveData.value!!.add(newHabit)
+            habitsList.add(newHabit)
         }
 
         fun replaceHabit(oldHabit: Habit, newHabit: Habit) {
-            habitsLiveData.value?.let { value ->
-                val index = value.indexOf(oldHabit)
-                value.removeAt(index)
-                value.add(index, newHabit)
-            }
+            val index = habitsList.indexOf(oldHabit)
+            habitsList.removeAt(index)
+            habitsList.add(index, newHabit)
         }
 
     }
