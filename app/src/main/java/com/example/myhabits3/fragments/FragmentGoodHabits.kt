@@ -31,7 +31,9 @@ class FragmentGoodHabits : Fragment(R.layout.fragment_good_habits) {
 
         viewModel.currentHabits.observe(viewLifecycleOwner, { habits ->
             habits?.let { list ->
-                adapter.setData(list.filter { it.type.toBoolean() } as MutableList<Habit>)
+                adapter.setData(list.filter {
+                    it.type.toBoolean()
+                }.toMutableList())
             }
         })
 

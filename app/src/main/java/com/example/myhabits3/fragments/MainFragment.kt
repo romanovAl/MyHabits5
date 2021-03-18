@@ -58,7 +58,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.findAndSort) {
-            if (bottomSheetMainFragment != null) {
+            bottomSheetMainFragment?.let{
                 val behavior = BottomSheetBehavior.from(bottomSheetMainFragment)
                 behavior.state = BottomSheetBehavior.STATE_EXPANDED
             }
@@ -150,10 +150,10 @@ class MainFragment : Fragment(R.layout.fragment_main) {
             }
         }
 
-        filterTypeSpinner.onItemClickListener = AdapterView.OnItemClickListener()
-        { _, _, p, _ ->
+        filterTypeSpinner.onItemClickListener =
+            AdapterView.OnItemClickListener() { _, _, position, _ ->
 
-            if (p == 4) { //Без фильтра
+            if (position == 4) { //Без фильтра
 
                 filterSortUp.setImageResource(R.drawable.ic_baseline_arrow_upward_24)
                 filterSortDown.setImageResource(R.drawable.ic_baseline_arrow_downward_24)
