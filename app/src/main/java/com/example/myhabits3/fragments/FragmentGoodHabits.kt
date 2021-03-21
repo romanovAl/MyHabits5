@@ -20,6 +20,7 @@ class FragmentGoodHabits : Fragment(R.layout.fragment_good_habits) {
 
     private val viewModel: MainViewModel by activityViewModels()
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         recyclerGoodHabits.adapter = adapter

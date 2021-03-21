@@ -1,101 +1,125 @@
 package com.example.myhabits3.viewModels
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import com.example.myhabits3.data.FakeDatabase
+import com.example.myhabits3.data.AppDatabase
 import com.example.myhabits3.model.FilterTypes
 import com.example.myhabits3.model.Habit
 
-class MainViewModel : ViewModel() {
+class MainViewModel(application: Application) : AndroidViewModel(application) {
 
 
     private val currentHabitsLiveData: MutableLiveData<MutableList<Habit>> = MutableLiveData()
     val currentHabits: LiveData<MutableList<Habit>> get() = currentHabitsLiveData
 
+    private val appDatabase = AppDatabase.getHabitsDatabase(getApplication())
+    private val habitsDao = appDatabase.habitsDao()
+
+    private var currentFilterType: FilterTypes = FilterTypes.NoFilter
+    private var currentByDescending: Boolean = false
+
     init {
-        currentHabitsLiveData.value = FakeDatabase.habitsList
+        currentHabitsLiveData.value = habitsDao.selectAllHabits().toMutableList()
     }
 
     fun addHabit(newHabit: Habit) {
         cleanHabitsFilter()
-        FakeDatabase.addHabit(newHabit)
+        habitsDao.insertHabit(newHabit)
     }
 
     fun replaceHabit(oldHabit: Habit, newHabit: Habit) {
         cleanHabitsFilter()
-        FakeDatabase.replaceHabit(oldHabit, newHabit)
+        habitsDao.updateHabit(newHabit)
     }
 
     fun sortHabits(filterType: FilterTypes, byDescending: Boolean) {
 
-        when (filterType) { //Сортировка по типам
+        currentFilterType = filterType
+        currentByDescending = byDescending
 
-            FilterTypes.ByPriority -> {
-                if (byDescending) {
-                    val sortedHabits =
-                        currentHabitsLiveData.value?.sortedByDescending { it.priority }
-                    currentHabitsLiveData.value = sortedHabits?.toMutableList()
-                } else {
-                    val sortedHabits =
-                        currentHabitsLiveData.value?.sortedBy { it.priority }
-                    currentHabitsLiveData.value = sortedHabits?.toMutableList()
-                }
-            }
-
-            FilterTypes.ByPeriod -> {
-                if (byDescending) {
-                    val sortedHabits =
-                        currentHabitsLiveData.value?.sortedByDescending { it.frequency }
-                    currentHabitsLiveData.value = sortedHabits?.toMutableList()
-                } else {
-                    val sortedHabits =
-                        currentHabitsLiveData.value?.sortedBy { it.frequency }
-                    currentHabitsLiveData.value = sortedHabits?.toMutableList()
-                }
-            }
-
-            FilterTypes.ByCount -> {
-                if (byDescending) {
-                    val sortedHabits = currentHabitsLiveData.value?.sortedByDescending { it.count }
-                    currentHabitsLiveData.value = sortedHabits?.toMutableList()
-                } else {
-                    val sortedHabits =
-                        currentHabitsLiveData.value?.sortedBy { it.count }
-                    currentHabitsLiveData.value = sortedHabits?.toMutableList()
-                }
-            }
-
-            FilterTypes.ByDate -> {
-                if (byDescending) {
-                    val sortedHabits = currentHabitsLiveData.value?.sortedByDescending { it.date }
-                    currentHabitsLiveData.value = sortedHabits?.toMutableList()
-                } else {
-                    val sortedHabits =
-                        currentHabitsLiveData.value?.sortedBy { it.date }
-                    currentHabitsLiveData.value = sortedHabits?.toMutableList()
-                }
-            }
-
-            FilterTypes.NoFilter -> {
-                cleanHabitsFilter()
-            }
+        currentHabitsLiveData.value?.let {
+            val sortedHabits = sort(it, filterType, byDescending)
+            currentHabitsLiveData.value = sortedHabits.toMutableList()
         }
     }
 
     fun sortHabits(text: String) { //Поиск по привычкам
         if (text.isNotEmpty()) {
-            val sortedHabits = FakeDatabase.habitsList.filter {
+            var sortedHabits = habitsDao.selectAllHabits().filter {
                 it.title.contains(text, ignoreCase = true)
+            }
+            if (currentFilterType != FilterTypes.NoFilter) {
+                sortedHabits =
+                    sort(sortedHabits.toMutableList(), currentFilterType, currentByDescending)
             }
             currentHabitsLiveData.value = sortedHabits.toMutableList()
         } else {
-            cleanHabitsFilter()
+            if (currentFilterType != FilterTypes.NoFilter) {
+                val sortedHabits = sort(
+                    habitsDao.selectAllHabits().toMutableList(),
+                    currentFilterType,
+                    currentByDescending
+                )
+                currentHabitsLiveData.value = sortedHabits.toMutableList()
+            } else {
+                cleanHabitsFilter()
+            }
         }
     }
 
+    private fun sort(
+        habitsToSort: MutableList<Habit>,
+        filterType: FilterTypes,
+        byDescending: Boolean
+    ): List<Habit> {
+
+        return when (filterType) {
+
+            FilterTypes.ByPriority -> {
+                if (byDescending) {
+                    habitsToSort.sortedByDescending { it.priority }.toMutableList()
+                } else {
+                    habitsToSort.sortedBy { it.priority }.toMutableList()
+                }
+            }
+
+            FilterTypes.ByPeriod -> {
+                if (byDescending) {
+                    habitsToSort.sortedByDescending { it.frequency }.toMutableList()
+                } else {
+                    habitsToSort.sortedBy { it.frequency }.toMutableList()
+                }
+            }
+
+            FilterTypes.ByCount -> {
+                if (byDescending) {
+                    habitsToSort.sortedByDescending { it.count }.toMutableList()
+                } else {
+                    habitsToSort.sortedBy { it.count }.toMutableList()
+                }
+            }
+
+            FilterTypes.ByDate -> {
+                if (byDescending) {
+                    habitsToSort.sortedByDescending { it.date }
+                } else {
+                    habitsToSort.sortedBy { it.date }
+                }
+            }
+
+            FilterTypes.NoFilter -> {
+                habitsDao.selectAllHabits().toMutableList()
+            }
+        }
+
+    }
+
+    //TODO пофиксить поиск по сортированным привычкам
+
     fun cleanHabitsFilter() {
-        currentHabitsLiveData.value = FakeDatabase.habitsList
+        currentHabitsLiveData.value = habitsDao.selectAllHabits().toMutableList()
     }
 
 }

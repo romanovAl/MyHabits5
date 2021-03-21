@@ -58,7 +58,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.findAndSort) {
-            bottomSheetMainFragment?.let{
+            bottomSheetMainFragment?.let {
                 val behavior = BottomSheetBehavior.from(bottomSheetMainFragment)
                 behavior.state = BottomSheetBehavior.STATE_EXPANDED
             }
@@ -153,20 +153,18 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         filterTypeSpinner.onItemClickListener =
             AdapterView.OnItemClickListener() { _, _, position, _ ->
 
-            if (position == 4) { //Без фильтра
+                if (position == 4) { //Без фильтра
 
-                filterSortUp.setImageResource(R.drawable.ic_baseline_arrow_upward_24)
-                filterSortDown.setImageResource(R.drawable.ic_baseline_arrow_downward_24)
+                    filterSortUp.setImageResource(R.drawable.ic_baseline_arrow_upward_24)
+                    filterSortDown.setImageResource(R.drawable.ic_baseline_arrow_downward_24)
 
-                viewModel.cleanHabitsFilter()
+                    viewModel.cleanHabitsFilter()
+
+                }
 
             }
 
-        }
-
         val behavior = BottomSheetBehavior.from(bottomSheetMainFragment)
-        behavior.state = BottomSheetBehavior.STATE_HIDDEN
-        behavior.peekHeight = 0
 
 
         behavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
@@ -184,7 +182,9 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         })
 
         bottomSheetTitleCard.setOnClickListener {
-            if (behavior.state == BottomSheetBehavior.STATE_EXPANDED) {
+            if (behavior.state != BottomSheetBehavior.STATE_EXPANDED) {
+                behavior.state = BottomSheetBehavior.STATE_EXPANDED
+            } else {
                 behavior.state = BottomSheetBehavior.STATE_COLLAPSED
             }
         }

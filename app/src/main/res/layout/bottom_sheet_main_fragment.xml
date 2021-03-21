@@ -5,13 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@android:color/background_light"
-    app:behavior_hideable="true"
+    app:behavior_hideable="false"
+    app:behavior_peekHeight = "?attr/actionBarSize"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/bottomSheetTitleCard"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="?attr/actionBarSize"
         app:cardBackgroundColor="@color/colorPrimaryCustom"
         app:cardCornerRadius="8dp"
         android:elevation="0dp"

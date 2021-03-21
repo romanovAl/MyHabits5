@@ -9,6 +9,7 @@ import android.widget.AutoCompleteTextView
 import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.example.myhabits3.viewModels.AddEditViewModel
@@ -39,7 +40,7 @@ class FragmentAddEdit : Fragment(R.layout.fragment_add_edit) {
     }
     private val mainViewModel: MainViewModel by activityViewModels()
 
-    private val addEditViewModel : AddEditViewModel by activityViewModels()
+    private val addEditViewModel: AddEditViewModel by activityViewModels()
 
 
     override fun onCreateView(
@@ -119,6 +120,7 @@ class FragmentAddEdit : Fragment(R.layout.fragment_add_edit) {
             }
 
             val newHabit = Habit(
+                bdId = habitToEdit?.bdId,
                 title = habitNameAddAndEdit.text.toString(),
                 description = habitDescriptionAddAndEdit.text.toString(),
                 priority = newPriority,

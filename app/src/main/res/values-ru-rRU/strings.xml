@@ -32,8 +32,8 @@
     <string name="period_anyear">в год</string>
     <string name="label_edit">Изменить привычку</string>
     <string name="label_add">Новая привычка</string>
-    <string name="view_pager_good">Хорошие привычки</string>
-    <string name="view_pager_bad">Плохие привычки</string>
+    <string name="view_pager_good">"Хорошие "</string>
+    <string name="view_pager_bad">"Плохие "</string>
     <string name="delete_habit">Удалить привычку</string>
     <string name="no_internet_connection">Отсутсвует соединение с интернетом!</string>
     <string name="are_you_sure_you_want_to_delete">Вы уверены что хотите удалить привычку</string>
@@ -72,5 +72,8 @@
     <string name="are_you_sure_you_want_to_exit">Вы уверены, что хотите выйти?</string>
     <string name="habit_will_not_be_saved">Привычка не будет сохранена</string>
     <string name="about_app">О приложении</string>
+    <string name="default_color">По умолчанию</string>
+    <string name="OK">ОК</string>
+    <string name="habit_color_choose">Выбор цвета привычки :</string>
 
 </resources>

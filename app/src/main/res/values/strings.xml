@@ -35,8 +35,8 @@
     <string name="period_anyear">per year</string>
     <string name="label_edit">Editing habit</string>
     <string name="label_add">Adding habit</string>
-    <string name="view_pager_good">Good Habits</string>
-    <string name="view_pager_bad">Bad habits</string>
+    <string name="view_pager_good">"Good "</string>
+    <string name="view_pager_bad">"Bad "</string>
     <string name="delete_habit">delete habit</string>
     <string name="no_internet_connection">No internet connection!</string>
     <string name="are_you_sure_you_want_to_delete">Are you sure you want to delete habit</string>
@@ -54,6 +54,9 @@
     <string name="HSV" translatable="false">HSV - %1$s</string>
     <string name="create">Create</string>
     <string name="save">Save</string>
+    <string name="default_color">Default color</string>
+    <string name="OK">OK</string>
+    <string name="habit_color_choose">habit color choose:</string>
 
     <string-array name="priorities">
         <item>No priority</item>
