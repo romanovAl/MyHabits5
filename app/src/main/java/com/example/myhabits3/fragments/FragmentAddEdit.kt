@@ -133,7 +133,7 @@ class FragmentAddEdit : Fragment(R.layout.fragment_add_edit) {
             )
 
             if (habitToEdit != null) {
-                mainViewModel.replaceHabit(habitToEdit!!, newHabit)
+                mainViewModel.replaceHabit(newHabit)
             } else {
                 mainViewModel.addHabit(newHabit)
             }
@@ -197,6 +197,22 @@ class FragmentAddEdit : Fragment(R.layout.fragment_add_edit) {
 
             curColor = it.color
             curColorNumber = Util.getColorNumberByColor(it.color)
+
+            deleteButton.visibility = View.VISIBLE
+            deleteButton.setOnClickListener {view ->
+                MaterialAlertDialogBuilder(requireContext())
+                    .setTitle(R.string.deleting_habbit)
+                    .setMessage(getString(R.string.are_you_sure_you_want_to_delete, it.title))
+                    .setPositiveButton(R.string.yes) { _, _ ->
+                        mainViewModel.deleteHabit(it)
+                        navController.popBackStack()
+                    }
+                    .setNegativeButton(R.string.no) { _, _ -> }
+                    .setCancelable(true)
+                    .show()
+
+                view.hideKeyboard()
+            }
 
 
         }

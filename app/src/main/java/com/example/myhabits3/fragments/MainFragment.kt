@@ -48,22 +48,13 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         (filterInputLayout.editText as? AutoCompleteTextView)?.setAdapter(adapterFilterTypes)
         filterTypeSpinner.keyListener = null
 
-        super.onResume()
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.main_fragment_menu, menu)
-        super.onCreateOptionsMenu(menu, inflater)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.findAndSort) {
-            bottomSheetMainFragment?.let {
-                val behavior = BottomSheetBehavior.from(bottomSheetMainFragment)
-                behavior.state = BottomSheetBehavior.STATE_EXPANDED
-            }
+        val behavior = BottomSheetBehavior.from(bottomSheetMainFragment)
+        if(behavior.state != BottomSheetBehavior.STATE_COLLAPSED){
+            fabAddHabit.animate().scaleX(0F).scaleY(0f)
+                .setDuration(0).start()
         }
-        return true
+
+        super.onResume()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -77,6 +68,8 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         }.attach()
 
         fabAddHabit.setOnClickListener {
+            filterTypeSpinner
+            viewModel.cleanHabitsFilter()
             val action =
                 MainFragmentDirections.actionFragmentMainToFragmentAddEdit(getString(R.string.label_add))
             navController.navigate(action)

@@ -39,7 +39,7 @@
     <string name="view_pager_bad">"Bad "</string>
     <string name="delete_habit">delete habit</string>
     <string name="no_internet_connection">No internet connection!</string>
-    <string name="are_you_sure_you_want_to_delete">Are you sure you want to delete habit</string>
+    <string name="are_you_sure_you_want_to_delete">Are you sure you want to delete habit \"%1$s\" ?</string>
     <string name="are_you_sure_you_want_to_exit">Are you sure you want to exit?</string>
     <string name="habit_will_not_be_saved">Habit will not be saved</string>
     <string name="yes">Yes</string>

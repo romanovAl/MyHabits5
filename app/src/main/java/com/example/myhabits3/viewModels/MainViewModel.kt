@@ -29,9 +29,14 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         habitsDao.insertHabit(newHabit)
     }
 
-    fun replaceHabit(oldHabit: Habit, newHabit: Habit) {
+    fun replaceHabit(newHabit: Habit) {
         cleanHabitsFilter()
         habitsDao.updateHabit(newHabit)
+    }
+
+    fun deleteHabit(habitToDelete : Habit){
+        cleanHabitsFilter()
+        habitsDao.deleteHabit(habitToDelete)
     }
 
     fun sortHabits(filterType: FilterTypes, byDescending: Boolean) {
@@ -119,6 +124,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     //TODO пофиксить поиск по сортированным привычкам
 
     fun cleanHabitsFilter() {
+        currentFilterType = FilterTypes.NoFilter
+        currentByDescending = false
         currentHabitsLiveData.value = habitsDao.selectAllHabits().toMutableList()
     }
 

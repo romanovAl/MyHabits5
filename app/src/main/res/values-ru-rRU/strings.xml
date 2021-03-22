@@ -36,7 +36,7 @@
     <string name="view_pager_bad">"Плохие "</string>
     <string name="delete_habit">Удалить привычку</string>
     <string name="no_internet_connection">Отсутсвует соединение с интернетом!</string>
-    <string name="are_you_sure_you_want_to_delete">Вы уверены что хотите удалить привычку</string>
+    <string name="are_you_sure_you_want_to_delete">"Вы уверены что хотите удалить привычку \"%1$s\" </string>
     <string name="yes">Да</string>
     <string name="no">Нет</string>
     <string name="upload_to_api">Выгрузить на сервер</string>
