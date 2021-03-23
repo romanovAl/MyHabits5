@@ -4,9 +4,12 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.example.myhabits3.data.AppDatabase
 import com.example.myhabits3.model.FilterTypes
 import com.example.myhabits3.model.Habit
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -21,60 +24,76 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private var currentByDescending: Boolean = false
 
     init {
-        currentHabitsLiveData.value = habitsDao.selectAllHabits().toMutableList()
+        viewModelScope.launch(Dispatchers.IO){
+            currentHabitsLiveData.postValue(habitsDao.selectAllHabits().toMutableList())
+        }
     }
 
     fun addHabit(newHabit: Habit) {
         cleanHabitsFilter()
-        habitsDao.insertHabit(newHabit)
+        viewModelScope.launch(Dispatchers.IO){
+            habitsDao.insertHabit(newHabit)
+        }
+
     }
 
     fun replaceHabit(newHabit: Habit) {
         cleanHabitsFilter()
-        habitsDao.updateHabit(newHabit)
+        viewModelScope.launch ( Dispatchers.IO ){
+            habitsDao.updateHabit(newHabit)
+        }
+
     }
 
     fun deleteHabit(habitToDelete : Habit){
         cleanHabitsFilter()
-        habitsDao.deleteHabit(habitToDelete)
+        viewModelScope.launch(Dispatchers.IO){
+            habitsDao.deleteHabit(habitToDelete)
+        }
     }
 
     fun sortHabits(filterType: FilterTypes, byDescending: Boolean) {
 
-        currentFilterType = filterType
-        currentByDescending = byDescending
-
-        currentHabitsLiveData.value?.let {
-            val sortedHabits = sort(it, filterType, byDescending)
-            currentHabitsLiveData.value = sortedHabits.toMutableList()
+        viewModelScope.launch(Dispatchers.IO){
+            currentFilterType = filterType
+            currentByDescending = byDescending
+            
+            currentHabitsLiveData.value?.let {
+                val sortedHabits = sort(it, filterType, byDescending)
+                currentHabitsLiveData.postValue(sortedHabits.toMutableList())
+            }
         }
+
     }
 
     fun sortHabits(text: String) { //Поиск по привычкам
-        if (text.isNotEmpty()) {
-            var sortedHabits = habitsDao.selectAllHabits().filter {
-                it.title.contains(text, ignoreCase = true)
-            }
-            if (currentFilterType != FilterTypes.NoFilter) {
-                sortedHabits =
-                    sort(sortedHabits.toMutableList(), currentFilterType, currentByDescending)
-            }
-            currentHabitsLiveData.value = sortedHabits.toMutableList()
-        } else {
-            if (currentFilterType != FilterTypes.NoFilter) {
-                val sortedHabits = sort(
-                    habitsDao.selectAllHabits().toMutableList(),
-                    currentFilterType,
-                    currentByDescending
-                )
-                currentHabitsLiveData.value = sortedHabits.toMutableList()
+        viewModelScope.launch(Dispatchers.IO){
+            if (text.isNotEmpty()) {
+                var sortedHabits = habitsDao.selectAllHabits().filter {
+                    it.title.contains(text, ignoreCase = true)
+                }
+                if (currentFilterType != FilterTypes.NoFilter) {
+                    sortedHabits =
+                        sort(sortedHabits.toMutableList(), currentFilterType, currentByDescending)
+                }
+                currentHabitsLiveData.postValue(sortedHabits.toMutableList())
             } else {
-                cleanHabitsFilter()
+                if (currentFilterType != FilterTypes.NoFilter) {
+                    val sortedHabits = sort(
+                        habitsDao.selectAllHabits().toMutableList(),
+                        currentFilterType,
+                        currentByDescending
+                    )
+                    currentHabitsLiveData.postValue(sortedHabits.toMutableList())
+                } else {
+                    cleanHabitsFilter()
+                }
             }
         }
+
     }
 
-    private fun sort(
+    private suspend fun sort(
         habitsToSort: MutableList<Habit>,
         filterType: FilterTypes,
         byDescending: Boolean
@@ -126,7 +145,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun cleanHabitsFilter() {
         currentFilterType = FilterTypes.NoFilter
         currentByDescending = false
-        currentHabitsLiveData.value = habitsDao.selectAllHabits().toMutableList()
+        viewModelScope.launch(Dispatchers.IO){
+            currentHabitsLiveData.postValue(habitsDao.selectAllHabits().toMutableList())
+        }
     }
 
 }

@@ -7,21 +7,21 @@ import com.example.myhabits3.model.Habit
 interface HabitsDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertHabit(habit: Habit)
+    suspend fun insertHabit(habit: Habit)
 
     @Query("SELECT * from Habit ORDER BY bdId DESC")
-    fun selectAllHabits(): List<Habit>
+    suspend fun selectAllHabits(): List<Habit>
 
-    @Query("SELECT * from Habit WHERE type = 0 ORDER BY bdId DESC")
-    fun selectBadHabits(): List<Habit>
-
-    @Query("SELECT * FROM Habit WHERE type = 1 ORDER BY bdId DESC")
-    fun selectGoodHabits(): List<Habit>
+//    @Query("SELECT * from Habit WHERE type = 0 ORDER BY bdId DESC")
+//    fun selectBadHabits(): List<Habit>
+//
+//    @Query("SELECT * FROM Habit WHERE type = 1 ORDER BY bdId DESC")
+//    fun selectGoodHabits(): List<Habit>
 
     @Delete
-    fun deleteHabit(habit: Habit)
+    suspend fun deleteHabit(habit: Habit)
 
     @Update
-    fun updateHabit(habit: Habit)
+    suspend fun updateHabit(habit: Habit)
 
 }
