@@ -9,7 +9,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import com.example.myhabits3.viewModels.AddEditViewModel
 import com.example.myhabits3.R
-import com.example.myhabits3.model.Util
+import com.example.myhabits3.utils.Util
 import kotlinx.android.synthetic.main.color_picker_dialog_fragment.*
 import kotlinx.android.synthetic.main.color_picker_dialog_fragment.view.*
 

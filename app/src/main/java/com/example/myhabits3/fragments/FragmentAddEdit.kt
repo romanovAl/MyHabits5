@@ -9,14 +9,13 @@ import android.widget.AutoCompleteTextView
 import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.example.myhabits3.viewModels.AddEditViewModel
 import com.example.myhabits3.viewModels.MainViewModel
 import com.example.myhabits3.R
 import com.example.myhabits3.model.Habit
-import com.example.myhabits3.model.Util
+import com.example.myhabits3.utils.Util
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.android.synthetic.main.fragment_add_edit.*
 import java.util.*
@@ -120,6 +119,7 @@ class FragmentAddEdit : Fragment(R.layout.fragment_add_edit) {
             }
 
             val newHabit = Habit(
+                uid = habitToEdit?.uid,
                 bdId = habitToEdit?.bdId,
                 title = habitNameAddAndEdit.text.toString(),
                 description = habitDescriptionAddAndEdit.text.toString(),

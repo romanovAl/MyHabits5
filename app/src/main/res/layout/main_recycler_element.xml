@@ -91,6 +91,24 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/habitPriorityRecyclerElement"
         app:layout_constraintTop_toBottomOf="@+id/habitPriorityRecyclerElement"
+        app:layout_constraintVertical_bias="0.0"
         tools:text="Периодичность" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/buttonDone"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/done"
+        app:icon="@drawable/ic_baseline_check_24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/habitPeriodRecyclerElement" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

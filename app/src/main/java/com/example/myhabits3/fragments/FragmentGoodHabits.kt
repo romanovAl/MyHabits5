@@ -8,15 +8,22 @@ import com.example.myhabits3.viewModels.MainViewModel
 import com.example.myhabits3.R
 import com.example.myhabits3.adapters.MainAdapter
 import com.example.myhabits3.model.Habit
-import com.example.myhabits3.model.SpacingItemDecoration
+import com.example.myhabits3.utils.SpacingItemDecoration
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_good_habits.*
 
 class FragmentGoodHabits : Fragment(R.layout.fragment_good_habits) {
 
     private val adapter: MainAdapter by lazy {
         val data = ArrayList<Habit>()
-        MainAdapter(data, requireContext())
+        MainAdapter(data, requireContext()){ habit ->
+            viewModel.addDoneTimes(habit)
+
+            habitFromAdapter = habit
+        }
     }
+
+    private var habitFromAdapter : Habit? = null
 
     private val viewModel: MainViewModel by activityViewModels()
 
@@ -37,6 +44,25 @@ class FragmentGoodHabits : Fragment(R.layout.fragment_good_habits) {
                 }.toMutableList())
             }
         })
+
+        viewModel.message.observe(viewLifecycleOwner){message ->
+            if (message != null){
+
+                Snackbar.make(requireView(), message, Snackbar.LENGTH_LONG)
+                    .setAction("Undo") {
+                        habitFromAdapter?.let{
+                            viewModel.removeLastDoneTimes(habitFromAdapter!!)
+                        }
+                    }.show()
+            }
+        }
+
+        viewModel.messageWithoutUndo.observe(viewLifecycleOwner){message ->
+            if(message != null){
+                Snackbar.make(requireView(), message, Snackbar.LENGTH_LONG).show()
+            }
+        }
+
 
         super.onViewCreated(view, savedInstanceState)
     }

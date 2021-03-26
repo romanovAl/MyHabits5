@@ -16,7 +16,8 @@ import kotlinx.android.synthetic.main.main_recycler_element.view.*
 
 class MainAdapter(
     private var habits: MutableList<Habit>,
-    context: Context
+    context: Context,
+    val adapterOnClickDone: (Habit) -> Unit
 ) : RecyclerView.Adapter<MainAdapter.ViewHolder>() {
 
     private val priorities = context.resources.getStringArray(R.array.priorities)
@@ -73,6 +74,10 @@ class MainAdapter(
                     else -> priorities[0]
                 }
                 habitColorDivider.setBackgroundColor(habit.color)
+
+                buttonDone.setOnClickListener {
+                    adapterOnClickDone(habit)
+                }
 
             }
 

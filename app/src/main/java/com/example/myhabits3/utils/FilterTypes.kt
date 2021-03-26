@@ -1,4 +1,4 @@
-package com.example.myhabits3.model
+package com.example.myhabits3.utils
 
 enum class FilterTypes() {
     ByPriority,

@@ -11,16 +11,19 @@ import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.example.myhabits3.viewModels.MainViewModel
 import com.example.myhabits3.R
 import com.example.myhabits3.adapters.ViewPagerAdapter
-import com.example.myhabits3.model.FilterTypes
+import com.example.myhabits3.utils.FilterTypes
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.android.synthetic.main.bottom_sheet_main_fragment.*
 import kotlinx.android.synthetic.main.fragment_main.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class MainFragment : Fragment(R.layout.fragment_main) {
 
@@ -49,12 +52,30 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         filterTypeSpinner.keyListener = null
 
         val behavior = BottomSheetBehavior.from(bottomSheetMainFragment)
-        if(behavior.state != BottomSheetBehavior.STATE_COLLAPSED){
+        if (behavior.state != BottomSheetBehavior.STATE_COLLAPSED) {
             fabAddHabit.animate().scaleX(0F).scaleY(0f)
                 .setDuration(0).start()
         }
 
         super.onResume()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.api_menu, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.uploadToServer -> {
+                viewModel.insertHabitsIntoApi()
+                true
+            }
+            else -> {
+                viewModel.downloadHabitsFromApi()
+                true
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -67,13 +88,28 @@ class MainFragment : Fragment(R.layout.fragment_main) {
             tab.text = tabNames[position]
         }.attach()
 
+        viewModel.isLoading.observe(viewLifecycleOwner, { isLoading ->
+
+            if (isLoading) {
+                progressBar.visibility = View.VISIBLE
+                mainFragmentConstraint.visibility = View.INVISIBLE
+            } else {
+                progressBar.visibility = View.INVISIBLE
+                mainFragmentConstraint.visibility = View.VISIBLE
+            }
+
+        })
+
         fabAddHabit.setOnClickListener {
-            filterTypeSpinner
-            viewModel.cleanHabitsFilter()
+            lifecycleScope.launch(Dispatchers.IO) {
+                viewModel.cleanHabitsFilter()
+            }
+
             val action =
                 MainFragmentDirections.actionFragmentMainToFragmentAddEdit(getString(R.string.label_add))
             navController.navigate(action)
         }
+
 
         filterFind.addTextChangedListener(object : TextWatcher {
 
@@ -81,7 +117,9 @@ class MainFragment : Fragment(R.layout.fragment_main) {
                 if (text != null) {
                     viewModel.sortHabits(text.toString())
                 } else {
-                    viewModel.cleanHabitsFilter()
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        viewModel.cleanHabitsFilter()
+                    }
                 }
             }
 
@@ -151,7 +189,9 @@ class MainFragment : Fragment(R.layout.fragment_main) {
                     filterSortUp.setImageResource(R.drawable.ic_baseline_arrow_upward_24)
                     filterSortDown.setImageResource(R.drawable.ic_baseline_arrow_downward_24)
 
-                    viewModel.cleanHabitsFilter()
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        viewModel.cleanHabitsFilter()
+                    }
 
                 }
 

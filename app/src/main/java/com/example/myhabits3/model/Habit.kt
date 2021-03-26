@@ -10,6 +10,7 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 @Entity
 data class Habit(
+    var uid : String?,
     @PrimaryKey(autoGenerate = true)
     var bdId: Int?,
     var title: String,

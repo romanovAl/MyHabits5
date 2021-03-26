@@ -1,4 +1,4 @@
-package com.example.myhabits3.model
+package com.example.myhabits3.utils
 
 import android.graphics.Rect
 import android.view.View

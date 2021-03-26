@@ -75,5 +75,7 @@
     <string name="default_color">По умолчанию</string>
     <string name="OK">ОК</string>
     <string name="habit_color_choose">Выбор цвета привычки :</string>
+    <string name="you_have_to_do_this_habit">Вам стоит выполнить эту привычку еще %1$s раз(а)</string>
+    <string name="you_have_already_done_enough">Вы уже выполнили достаточно!</string>
 
 </resources>

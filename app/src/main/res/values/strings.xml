@@ -58,6 +58,10 @@
     <string name="OK">OK</string>
     <string name="habit_color_choose">habit color choose:</string>
 
+    <string name="you_have_to_do_this_habit">You should do this habit %1$s more time(s)</string>
+    <string name="you_have_already_done_enough">You have already done enough</string>
+    <string name="you_are_breathtaking" translatable="false">You are breathtaking!</string>
+
     <string-array name="priorities">
         <item>No priority</item>
         <item>Low</item>
@@ -119,4 +123,5 @@
         <item>(255, 187, 202)</item>
         <item>(159, 168, 218)</item>
     </string-array>
+    <string name="period_is_not_chosen">period is not chosen</string>
 </resources>

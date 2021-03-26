@@ -12,14 +12,11 @@ interface HabitsDao {
     @Query("SELECT * from Habit ORDER BY bdId DESC")
     suspend fun selectAllHabits(): List<Habit>
 
-//    @Query("SELECT * from Habit WHERE type = 0 ORDER BY bdId DESC")
-//    fun selectBadHabits(): List<Habit>
-//
-//    @Query("SELECT * FROM Habit WHERE type = 1 ORDER BY bdId DESC")
-//    fun selectGoodHabits(): List<Habit>
-
     @Delete
     suspend fun deleteHabit(habit: Habit)
+
+    @Query("DELETE FROM Habit")
+    suspend fun deleteAllHabits()
 
     @Update
     suspend fun updateHabit(habit: Habit)
