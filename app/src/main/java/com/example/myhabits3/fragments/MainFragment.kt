@@ -1,6 +1,9 @@
 package com.example.myhabits3.fragments
 
 import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -9,6 +12,8 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
+import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -65,16 +70,32 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         inflater.inflate(R.menu.api_menu, menu)
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.uploadToServer -> {
-                viewModel.insertHabitsIntoApi()
-                true
+
+        val cm =
+            requireActivity().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val activeNetwork = cm.activeNetwork
+        val netCap = cm.getNetworkCapabilities(activeNetwork)
+
+        val isConnected =
+            (netCap != null && netCap.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET))
+
+        return if (isConnected) {
+            when (item.itemId) {
+                R.id.uploadToServer -> {
+                    viewModel.insertHabitsIntoApi()
+                    true
+                }
+                else -> {
+                    viewModel.downloadHabitsFromApi()
+                    true
+                }
             }
-            else -> {
-                viewModel.downloadHabitsFromApi()
-                true
-            }
+        } else {
+            Toast.makeText(context, getString(R.string.no_internet_connection), Toast.LENGTH_SHORT)
+                .show()
+            true
         }
     }
 
@@ -99,6 +120,12 @@ class MainFragment : Fragment(R.layout.fragment_main) {
             }
 
         })
+
+        viewModel.apiError.observe(viewLifecycleOwner) { apiError ->
+
+            Toast.makeText(context, apiError, Toast.LENGTH_LONG).show()
+
+        }
 
         fabAddHabit.setOnClickListener {
             lifecycleScope.launch(Dispatchers.IO) {

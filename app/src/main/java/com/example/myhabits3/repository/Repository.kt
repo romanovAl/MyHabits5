@@ -6,17 +6,22 @@ import com.example.myhabits3.model.PostDone
 import com.example.myhabits3.model.ServerHabit
 import com.example.myhabits3.model.Uid
 import com.example.myhabits3.restful.ApiService
+import okhttp3.Call
+import retrofit2.Response
+import java.lang.Error
 
 class Repository(
     private val habitsDao: HabitsDao,
     private val api: ApiService
 ) {
 
+    //DB--------------------------------------------------------
+
     suspend fun insertHabitIntoDB(habit: Habit) {
         habitsDao.insertHabit(habit)
     }
 
-    suspend fun insertHabitsIntoDB(habits: List<Habit>){
+    suspend fun insertHabitsIntoDB(habits: List<Habit>) {
         habits.forEach {
             habitsDao.insertHabit(it)
         }
@@ -30,7 +35,7 @@ class Repository(
         habitsDao.deleteHabit(habit)
     }
 
-    suspend fun deleteAllHabitsFromDB(){
+    suspend fun deleteAllHabitsFromDB() {
         habitsDao.deleteAllHabits()
     }
 
@@ -38,53 +43,25 @@ class Repository(
         habitsDao.updateHabit(habit)
     }
 
-    suspend fun insertHabitsIntoApi(habits: List<ServerHabit>) =
-        habits.forEach {
-            it.uid = null
-            api.putHabit(
-                it
-            )
-        }
+    //DB--------------------------------------------------------
 
-    suspend fun insertHabitIntoApi(habit: ServerHabit) =
+    //API------------------------------------------------------
+
+    suspend fun insertHabitIntoApi(habit: ServerHabit): Response<Uid> =
         api.putHabit(habit)
 
 
-    suspend fun getHabitsFromApi() =
+    suspend fun getHabitsFromApi(): Response<List<ServerHabit>> =
         api.getHabits()
 
-    suspend fun postHabitsDone(habitsFromApi: List<ServerHabit>, habitsFromDb: List<ServerHabit>) {
-        val habits = habitsFromDb.toMutableList()
-        for (i in 0 until habits.size) {
-            habits[i].uid = habitsFromApi[i].uid
-        }
 
-        habits.forEach { habit ->
-            habit.doneDates.forEach {
-                habit.uid?.let { uid ->
-                    val postDone = PostDone(uid, it)
-                    api.postHabitDone(
-                        postDone
-                    )
-                }
+    suspend fun postHabitDone(postDone: PostDone): Response<Unit> =
+        api.postHabitDone(postDone)
 
-            }
-        }
-    }
 
-    suspend fun deleteHabitsFromApi(habits: List<ServerHabit>) =
-        habits.forEach {
-            it.uid?.let { uid ->
-                api.deleteHabit(
-                    Uid(uid)
-                )
-            }
-        }
+    suspend fun deleteHabitFromApi(uid: Uid): Response<Unit> =
+        api.deleteHabit(uid)
 
-    suspend fun deleteHabitFromApi(habit: ServerHabit) =
-        habit.uid?.let {
-            api.deleteHabit(
-                Uid(it)
-            )
-        }
+    //API------------------------------------------------------
+
 }

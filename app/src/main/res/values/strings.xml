@@ -57,6 +57,7 @@
     <string name="default_color">Default color</string>
     <string name="OK">OK</string>
     <string name="habit_color_choose">habit color choose:</string>
+    <string name="undo">undo</string>
 
     <string name="you_have_to_do_this_habit">You should do this habit %1$s more time(s)</string>
     <string name="you_have_already_done_enough">You have already done enough</string>

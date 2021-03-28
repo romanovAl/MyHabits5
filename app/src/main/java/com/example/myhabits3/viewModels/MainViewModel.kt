@@ -7,16 +7,16 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.myhabits3.R
 import com.example.myhabits3.data.AppDatabase
+import com.example.myhabits3.model.*
 import com.example.myhabits3.utils.FilterTypes
-import com.example.myhabits3.model.Habit
-import com.example.myhabits3.model.HabitMapper
 import com.example.myhabits3.repository.Repository
 import com.example.myhabits3.restful.ApiService
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import okhttp3.ResponseBody
 import retrofit2.HttpException
-import retrofit2.Retrofit
+import retrofit2.Response
 import java.lang.Exception
 import java.util.*
 
@@ -35,14 +35,21 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val messageWithoutUndoLiveData: MutableLiveData<String> = MutableLiveData()
     val messageWithoutUndo: LiveData<String> get() = messageWithoutUndoLiveData
 
+    private val apiErrorLiveData: MutableLiveData<String> = MutableLiveData()
+    val apiError: LiveData<String> get() = apiErrorLiveData
+
     private val appDatabase = AppDatabase.getHabitsDatabase(getApplication())
+
+    private val retrofit = ApiService.create()
     private val repository = Repository(
         appDatabase.habitsDao(),
-        ApiService.create()
+        retrofit.create(ApiService::class.java)
     )
 
     private var currentFilterType: FilterTypes = FilterTypes.NoFilter
     private var currentByDescending: Boolean = false
+
+    private val habitMapper = HabitMapper()
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -285,6 +292,40 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     }
 
+    private suspend fun putHabitsIntoApiAndChangeUid(habits: List<Habit>): Boolean {
+
+        habits.forEach { habit ->
+            val response = repository.insertHabitIntoApi(habitMapper.habitToServerHabit(habit))
+            if (response.isSuccessful) {
+
+                response.body()?.let {
+                    habit.uid = it.uid
+                    repository.updateHabitInDB(habit)
+                }
+
+            } else {
+                val error = convertError(response.errorBody())
+                error?.let {
+                    isLoadingLiveData.postValue(false)
+                    apiErrorLiveData.postValue("error ${it.code} - ${it.message}")
+                }
+                return false
+            }
+        }
+        return true
+    }
+
+    private fun convertError(errorBody: ResponseBody?): Error? {
+        errorBody?.let { responseBody ->
+
+            return retrofit.responseBodyConverter<Error>(Error::class.java, arrayOf())
+                .convert(responseBody)
+        }
+
+        return null
+
+    }
+
     fun insertHabitsIntoApi() {
 
         viewModelScope.launch(Dispatchers.IO) {
@@ -292,38 +333,79 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             isLoadingLiveData.postValue(true)
 
             try {
-                var habitsFromApi = repository.getHabitsFromApi() //Удаляем всё, что есть в апи
-                repository.deleteHabitsFromApi(habitsFromApi)
+                val habitsFromApiResponse = repository.getHabitsFromApi()
 
-                val habitsFromDb = repository.getHabitsFromDB().map {
-                    HabitMapper().habitToServerHabit(it)
+                if (habitsFromApiResponse.isSuccessful) {
+                    habitsFromApiResponse.body()?.let { habitsFromApi ->
+
+                        habitsFromApi.forEach {  //Удаляем всё, что есть в апи
+                            val uid = Uid(it.uid!!)
+                            val deleteResponse = repository.deleteHabitFromApi(uid)
+                            if (!deleteResponse.isSuccessful) {
+                                val error = convertError(deleteResponse.errorBody())
+                                error?.let {
+                                    apiErrorLiveData.postValue("error ${it.code} - ${it.message}")
+                                }
+                                isLoadingLiveData.postValue(false)
+                                return@launch
+                            }
+                        }
+                    }
+                } else {
+                    val error = convertError(habitsFromApiResponse.errorBody())
+                    error?.let {
+                        apiErrorLiveData.postValue("error ${it.code} - ${it.message}")
+                    }
+                    isLoadingLiveData.postValue(false)
+                    return@launch
                 }
-                repository.insertHabitsIntoApi( //Вставляем актуальные привычки
-                    habitsFromDb
-                )
-                habitsFromApi = repository.getHabitsFromApi()
 
-                repository.postHabitsDone(habitsFromApi, habitsFromDb) //Кладем done_dates в апи
+                val habitsFromDb = repository.getHabitsFromDB()
+
+                val putResult =
+                    putHabitsIntoApiAndChangeUid(habitsFromDb) //Получаем привычки и меняем Uid у текущих в бд
+
+                if (!putResult) { //Если мы не смогли что-то положить в апи
+                    //Ошибка
+                    isLoadingLiveData.postValue(false)
+                    return@launch
+
+                }
+
+                repository.getHabitsFromDB().forEach { habit ->
+                    habit.uid?.let { uid ->
+                        habit.doneDates.forEach { doneDate ->
+                            val postHabitDoneResponse = repository.postHabitDone(
+                                PostDone(
+                                    uid,
+                                    doneDate
+                                )
+                            ) //Постим done_dates
+                            if (!postHabitDoneResponse.isSuccessful) {
+                                val error = convertError(postHabitDoneResponse.errorBody())
+                                error?.let {
+                                    apiErrorLiveData.postValue("error ${it.code} - ${it.message}")
+                                }
+                                isLoadingLiveData.postValue(false)
+                                return@launch
+                            }
+                        }
+
+                    }
+
+                }
 
                 isLoadingLiveData.postValue(false)
-            } catch (e: HttpException) {
+            } catch (e: Exception) {
 
-                when (e.code()){
+                if (e is HttpException) {
+                    apiErrorLiveData.postValue("error ${e.code()} - ${e.message()}")
 
-                    400 -> println("error 400 - Bad request!")
-                    401 -> println("error 401 - Unauthorized exception")
-                    403 -> println("error 403 - Forbidden exception")
-                    404 -> println("error 404 - Not found")
-                    409 -> println("error 409 - Conflict exception")
-                    500 -> println("error 500 - internal server error")
-                    503 -> println("error 503 - service unavailable")
-
-                }
-
-                //Попробовать call
-
-                e.response()?.errorBody()?.let{
-
+                    isLoadingLiveData.postValue(false)
+                } else {
+                    delay(5000) //Если случилась непредвиденная ошибка, то повторяем запросы
+                    insertHabitsIntoApi()
+                    //TODO сделать счетчик запросов
                 }
 
                 isLoadingLiveData.postValue(false)
@@ -340,23 +422,49 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             isLoadingLiveData.postValue(true)
 
             try {
-                repository.deleteAllHabitsFromDB()
 
-                val habitsFromApi = repository.getHabitsFromApi().map {
-                    HabitMapper().serverHabitToHabit(it)
+
+                val habitsFromApiResponse = repository.getHabitsFromApi() //Получаем привычки из апи
+                if (habitsFromApiResponse.isSuccessful) {
+                    repository.deleteAllHabitsFromDB() //Удаляем все привычки из БД
+
+                    habitsFromApiResponse.body()?.let { habitsFromApi ->
+                        repository.insertHabitsIntoDB(
+                            habitsFromApi.map {
+                                habitMapper.serverHabitToHabit(it)
+                            }.asReversed()
+                        )
+                        currentHabitsLiveData.postValue(
+                            repository.getHabitsFromDB().toMutableList()
+                        )
+
+                        isLoadingLiveData.postValue(false)
+                    }
+
+                } else {
+                    val error = convertError(habitsFromApiResponse.errorBody())
+                    error?.let {
+                        apiErrorLiveData.postValue("error ${it.code} - ${it.message}")
+                    }
+                    isLoadingLiveData.postValue(false)
+                    return@launch
                 }
 
-                println(habitsFromApi)
+            } catch (e: Exception) {
 
-                repository.insertHabitsIntoDB(habitsFromApi.asReversed())
+                if (e is HttpException) {
+                    apiErrorLiveData.postValue("error ${e.code()} - ${e.message()}")
 
-                currentHabitsLiveData.postValue(repository.getHabitsFromDB().toMutableList())
+                    isLoadingLiveData.postValue(false)
+                } else {
+                    println(e.message)
+                    delay(5000)
+                    downloadHabitsFromApi()
+                }
+
 
                 isLoadingLiveData.postValue(false)
-            } catch (e: HttpException) {
-                isLoadingLiveData.postValue(true)
             }
-
 
         }
 
