@@ -4,22 +4,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.FragmentAddEdit">
+    tools:context=".ui.fragments.FragmentAddEdit">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
 
         <ScrollView
+            android:id="@+id/scrollView2"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true"
+            android:fillViewport="true">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/constraintAddEdit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:context=".activity.AddAndEditActivity">
+                tools:context=".ui.activity.AddAndEditActivity">
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/habitNameInputLayout"
@@ -129,7 +128,6 @@
                     android:textColorHint="@color/colorPrimaryCustom"
                     app:errorEnabled="true"
                     app:layout_constraintEnd_toEndOf="@+id/habitPriorityInputLayout"
-                    app:layout_constraintHorizontal_bias="0.51"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/radioGroup">
 
@@ -172,24 +170,22 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:layout_marginBottom="8dp"
+                    android:layout_marginEnd="8dp"
                     android:text="Выбрать цвет"
                     android:textColor="@android:color/tertiary_text_dark"
-                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/habitPeriodInputLayout"
-                    app:layout_constraintVertical_bias="0.0" />
+                    app:layout_constraintTop_toBottomOf="@+id/habitPeriodInputLayout" />
 
                 <ImageView
                     android:id="@+id/curColorImageView"
-                    android:layout_width="45dp"
-                    android:layout_height="45dp"
-                    android:layout_marginEnd="32dp"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_marginStart="8dp"
                     app:layout_constraintBottom_toBottomOf="@+id/colorPickerButton"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="1.0"
+                    app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toEndOf="@+id/colorPickerButton"
                     app:layout_constraintTop_toTopOf="@+id/colorPickerButton"
                     app:srcCompat="@drawable/color_viewer_element" />
@@ -199,24 +195,25 @@
                     style="@style/Widget.MaterialComponents.Button.TextButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginBottom="8dp"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="16dp"
+                    android:gravity="bottom"
                     android:text="@string/delete_habit"
                     android:textColor="@android:color/holo_red_light"
                     android:visibility="invisible"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/colorPickerButton"
-                    tools:text="удалить привычку" />
+                    app:layout_constraintVertical_bias="1.0"
+                    tools:visibility="visible" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+
+
         </ScrollView>
 
-    </LinearLayout>
+
 
 </FrameLayout>

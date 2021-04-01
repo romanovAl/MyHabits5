@@ -70,7 +70,7 @@
     <string name="create">Создать</string>
     <string name="save">Сохранить</string>
     <string name="are_you_sure_you_want_to_exit">Вы уверены, что хотите выйти?</string>
-    <string name="habit_will_not_be_saved">Привычка не будет сохранена</string>
+    <string name="habit_will_not_be_saved">Изменения не будут сохранены</string>
     <string name="about_app">О приложении</string>
     <string name="default_color">По умолчанию</string>
     <string name="OK">ОК</string>
