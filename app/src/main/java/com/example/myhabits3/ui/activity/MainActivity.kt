@@ -2,7 +2,6 @@ package com.example.myhabits3.ui.activity
 
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageView
 import androidx.core.view.GravityCompat
@@ -47,8 +46,8 @@ class MainActivity : DaggerAppCompatActivity() {
         Glide.with(this)
             .load(LOGO_URI)
             .override(150, 150)
-            .placeholder(ColorDrawable(Color.BLACK))
-            .error(R.drawable.ic_launcher_background)
+            .placeholder(R.drawable.rounded_corner_filled)
+            .error(R.drawable.rounded_corner_filled)
             .transform(CircleCrop())
             .into(imgView)
     }

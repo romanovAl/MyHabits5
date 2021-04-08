@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import androidx.activity.addCallback
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -43,11 +44,11 @@ class FragmentAddEdit : DaggerFragment(R.layout.fragment_add_edit) {
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    private val mainViewModel: MainViewModel by activityViewModels() {
+    private val mainViewModel: MainViewModel by viewModels({ requireParentFragment() }) {
         viewModelFactory
     }
 
-    private val addEditViewModel: AddEditViewModel by activityViewModels() {
+    private val addEditViewModel: AddEditViewModel by viewModels({ this }) {
         viewModelFactory
     }
 
@@ -240,7 +241,7 @@ class FragmentAddEdit : DaggerFragment(R.layout.fragment_add_edit) {
     private fun colorPickersOnClick() {
 
         ColorPickerDialogFragment.newInstance()
-            .show(parentFragmentManager, ColorPickerDialogFragment.TAG)
+            .show(childFragmentManager, ColorPickerDialogFragment.TAG)
 
         addEditViewModel.setColorPair(curColor, curColorNumber)
 
@@ -249,7 +250,6 @@ class FragmentAddEdit : DaggerFragment(R.layout.fragment_add_edit) {
     private fun Boolean.toInt() = if (this) 1 else 0
 
     private fun Int.toBoolean(): Boolean = this == 1
-
 
     private fun View.hideKeyboard() {
         val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager

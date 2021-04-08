@@ -14,7 +14,6 @@ import ru.romanoval.data.mapper.ErrorConverter
 import ru.romanoval.data.restful.ApiService
 import ru.romanoval.data.source.cloud.BaseCloudRepository
 import ru.romanoval.data.source.cloud.CloudRepository
-import ru.romanoval.domain.model.restful.ServerHabit
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
@@ -24,12 +23,11 @@ class NetworkModule {
     @Provides
     @Singleton
     fun providesRetrofit(
-        gson: Gson,
         okHttpClient: OkHttpClient
     ): Retrofit {
         return Retrofit.Builder()
             .baseUrl(Config.API_BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create(gson))
+            .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClient)
             .build()
     }
@@ -60,18 +58,6 @@ class NetworkModule {
         retrofit: Retrofit
     ) : ErrorConverter =
         ErrorConverter(retrofit)
-
-
-    @Provides
-    @Singleton
-    fun providesGson(): Gson {
-        return GsonBuilder()
-            .registerTypeAdapter(
-                ServerHabit::class.java,
-                ServerHabit.HabitJsonDeserializer()
-            )
-            .create()
-    }
 
     @Provides
     @Singleton

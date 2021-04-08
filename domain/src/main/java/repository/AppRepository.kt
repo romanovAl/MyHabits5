@@ -1,17 +1,16 @@
 package repository
 
-import kotlinx.coroutines.flow.Flow
-import retrofit2.Response
 import ru.romanoval.domain.model.Habit
+import ru.romanoval.domain.model.ResponseData
 import ru.romanoval.domain.model.restful.PostDone
-import ru.romanoval.domain.model.restful.ServerHabit
 import ru.romanoval.domain.model.restful.Uid
 
 interface AppRepository {
     //--------------------DATABASE-----------------------//
 
-    suspend fun selectAllHabits() : List<Habit>
+    suspend fun selectAllHabitsFromDB() : List<Habit>
     suspend fun insertHabitIntoDB(habit: Habit)
+    suspend fun insertHabitsIntoDB(habits : List<Habit>)
     suspend fun updateHabitInDB(habit: Habit)
     suspend fun deleteHabitFromDB(habit : Habit)
     suspend fun deleteAllHabitsFromDB()
@@ -20,10 +19,11 @@ interface AppRepository {
 
     //----------------------API--------------------------//
 
-    suspend fun insertHabitIntoApi(habit : ServerHabit) : Response<Uid>
-    suspend fun getHabitsFromApi() : Response<List<ServerHabit>>
-    suspend fun postHabitDone(postDone : PostDone) : Response<Unit>
-    suspend fun deleteHabitFromApi(uid : Uid) : Response<Unit>
+    suspend fun putHabitIntoApi(habit : Habit) : ResponseData.PutResponseData
+    suspend fun getHabitsFromApi() : ResponseData.GetResponseData
+    suspend fun postHabitDone(postDone : PostDone) : ResponseData
+    suspend fun deleteHabitFromApi(uid : Uid) : ResponseData
+    suspend fun postHabitsDone(postDones : List<PostDone>) : ResponseData
 
     //----------------------API--------------------------//
 }

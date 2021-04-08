@@ -1,6 +1,5 @@
 package com.example.myhabits3.ui.adapters
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,12 +15,8 @@ import ru.romanoval.domain.model.Habit
 
 class MainAdapter(
     private var habits: MutableList<Habit>,
-    context: Context,
     val adapterOnClickDone: (Habit) -> Unit
 ) : RecyclerView.Adapter<MainAdapter.ViewHolder>() {
-
-    private val priorities = context.resources.getStringArray(R.array.priorities)
-    private val periods = context.resources.getStringArray(R.array.periods)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -49,6 +44,9 @@ class MainAdapter(
         fun bind(habit: Habit) {
 
             containerView.run {
+
+                val priorities = context.resources.getStringArray(R.array.priorities)
+                val periods = context.resources.getStringArray(R.array.periods)
 
                 constraintMainRecyclerElement.setOnClickListener {
                     val action = MainFragmentDirections.actionFragmentMainToFragmentAddEdit(

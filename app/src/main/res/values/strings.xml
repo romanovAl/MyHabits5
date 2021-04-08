@@ -63,6 +63,10 @@
     <string name="you_have_already_done_enough">You have already done enough</string>
     <string name="you_are_breathtaking" translatable="false">You are breathtaking!</string>
 
+    <string name="you_can_do_this_habit">You can do this habit %1$s more time(s)</string>
+    <string name="you_should_not_do_this_habit_more">You should not do this habit more</string>
+    <string name="stop_doing_this_habit">Stop performing this habit</string>
+
     <string-array name="priorities">
         <item>No priority</item>
         <item>Low</item>

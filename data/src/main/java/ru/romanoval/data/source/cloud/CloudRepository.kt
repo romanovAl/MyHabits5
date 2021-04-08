@@ -1,9 +1,9 @@
 package ru.romanoval.data.source.cloud
 
 import retrofit2.Response
+import ru.romanoval.data.model.ServerHabit
 import ru.romanoval.data.restful.ApiService
 import ru.romanoval.domain.model.restful.PostDone
-import ru.romanoval.domain.model.restful.ServerHabit
 import ru.romanoval.domain.model.restful.Uid
 
 class CloudRepository(

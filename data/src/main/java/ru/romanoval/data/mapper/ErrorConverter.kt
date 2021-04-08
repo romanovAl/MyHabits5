@@ -7,11 +7,15 @@ import ru.romanoval.domain.model.restful.Error
 class ErrorConverter(
     private val retrofit: Retrofit
 ) {
-    fun convertError(errorBody: ResponseBody?): Error? {
+    fun convertError(errorBody: ResponseBody?): String? {
         errorBody?.let { responseBody ->
-            return retrofit
+            val error = retrofit
                 .responseBodyConverter<Error>(Error::class.java, arrayOf())
                 .convert(responseBody)
+
+            error?.let {
+                return "error ${it.code} - ${it.message}"
+            }
         }
 
         return null

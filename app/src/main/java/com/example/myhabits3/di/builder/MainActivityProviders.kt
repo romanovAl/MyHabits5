@@ -1,9 +1,6 @@
 package com.example.myhabits3.di.builder
 
-import com.example.myhabits3.ui.fragments.FragmentAddEdit
-import com.example.myhabits3.ui.fragments.FragmentBadHabits
-import com.example.myhabits3.ui.fragments.FragmentGoodHabits
-import com.example.myhabits3.ui.fragments.MainFragment
+import com.example.myhabits3.ui.fragments.*
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
@@ -21,6 +18,9 @@ abstract class MainActivityProviders {
 
     @ContributesAndroidInjector
     abstract fun provideFragmentAddEdit(): FragmentAddEdit
+
+    @ContributesAndroidInjector
+    abstract fun provideColorPickerDialogFragment(): ColorPickerDialogFragment
 
 
 }

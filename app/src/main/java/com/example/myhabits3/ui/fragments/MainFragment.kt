@@ -41,7 +41,10 @@ class MainFragment : DaggerFragment(R.layout.fragment_main) {
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    private val viewModel: MainViewModel by viewModels({ requireActivity() }) { viewModelFactory }
+    private val viewModel: MainViewModel by viewModels({ this }) {
+        viewModelFactory
+    }
+
 
     private val filterTypes by lazy {
         resources.getStringArray(R.array.filterTypes)
@@ -78,13 +81,13 @@ class MainFragment : DaggerFragment(R.layout.fragment_main) {
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
-        val cm =
+        val connectivityManager =
             requireActivity().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val activeNetwork = cm.activeNetwork
-        val netCap = cm.getNetworkCapabilities(activeNetwork)
+        val activeNetwork = connectivityManager.activeNetwork
+        val networkCapabilities = connectivityManager.getNetworkCapabilities(activeNetwork)
 
         val isConnected =
-            (netCap != null && netCap.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET))
+            (networkCapabilities != null && networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET))
 
         return if (isConnected) {
             when (item.itemId) {

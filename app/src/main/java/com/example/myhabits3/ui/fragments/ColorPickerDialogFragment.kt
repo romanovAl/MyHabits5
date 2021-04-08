@@ -5,15 +5,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import com.example.myhabits3.ui.viewModels.AddEditViewModel
 import com.example.myhabits3.R
 import com.example.myhabits3.ui.utils.Util
+import dagger.android.support.DaggerDialogFragment
 import kotlinx.android.synthetic.main.color_picker_dialog_fragment.*
 import kotlinx.android.synthetic.main.color_picker_dialog_fragment.view.*
+import javax.inject.Inject
 
-class ColorPickerDialogFragment() : DialogFragment() {
+class ColorPickerDialogFragment : DaggerDialogFragment() {
 
 
     private val listOfRgb: Array<String> by lazy {
@@ -22,7 +24,13 @@ class ColorPickerDialogFragment() : DialogFragment() {
     private val listOfHsv: Array<String> by lazy {
         requireContext().resources.getStringArray(R.array.hsvs)
     }
-    private val addEditViewModel : AddEditViewModel by activityViewModels()
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+
+    private val addEditViewModel : AddEditViewModel by viewModels({requireParentFragment()}) {
+        viewModelFactory
+    }
 
     var color: Int = 0
     private var colors = Util.intColors
@@ -45,6 +53,8 @@ class ColorPickerDialogFragment() : DialogFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
+        println(requireParentFragment())
 
         addEditViewModel.colorPair.observe(viewLifecycleOwner, { pairColor ->
             if (pairColor != null) {
@@ -104,7 +114,7 @@ class ColorPickerDialogFragment() : DialogFragment() {
         )
 
         checkedColors.forEach { it.visibility = INVISIBLE }
-        if (colorNumber != 16) {
+        if (colorNumber != DEFAULT_COLOR) {
             checkedColors[colorNumber].visibility = VISIBLE
         }
 

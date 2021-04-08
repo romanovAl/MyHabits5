@@ -3,6 +3,10 @@
 
     <group android:checkableBehavior="single">
         <item
+            android:id="@+id/fragmentMain"
+            android:title="@string/app_name"
+            />
+        <item
             android:id="@+id/aboutFragment"
             android:title="@string/about_app"/>
     </group>

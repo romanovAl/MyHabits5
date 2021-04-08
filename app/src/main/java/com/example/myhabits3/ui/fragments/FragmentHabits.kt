@@ -2,7 +2,7 @@ package com.example.myhabits3.ui.fragments
 
 import android.os.Bundle
 import android.view.View
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import com.example.myhabits3.R
 import com.example.myhabits3.ui.adapters.MainAdapter
@@ -18,18 +18,15 @@ open class FragmentHabits : DaggerFragment(R.layout.fragment_habits) {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
-    val viewModel: MainViewModel by activityViewModels {
+
+    val viewModel: MainViewModel by viewModels({ requireParentFragment() }) {
         viewModelFactory
     }
 
-    var habitFromAdapter: Habit? = null
-
     val adapter: MainAdapter by lazy {
         val data = ArrayList<Habit>()
-        MainAdapter(data, requireContext()) { habit ->
+        MainAdapter(data) { habit ->
             viewModel.addDoneTimes(habit)
-
-            habitFromAdapter = habit
         }
     }
 
@@ -42,25 +39,29 @@ open class FragmentHabits : DaggerFragment(R.layout.fragment_habits) {
             )
         )
 
-        viewModel.message.observe(viewLifecycleOwner) { message ->
-            if (message != null) {
-
-                Snackbar.make(requireParentFragment().requireView(), message, Snackbar.LENGTH_LONG)
+        viewModel.messageWithUndoEvent.observe(viewLifecycleOwner) { messageAndHabit ->
+            messageAndHabit?.let { pair ->
+                Snackbar.make(
+                    requireParentFragment().requireView(),
+                    pair.second,
+                    Snackbar.LENGTH_LONG
+                )
                     .setAction(getString(R.string.undo)) {
-                        habitFromAdapter?.let {
-                            viewModel.removeLastDoneTimes(habitFromAdapter!!)
-                        }
+                        viewModel.removeLastDoneTimes(pair.first)
                     }.show()
             }
         }
 
-        viewModel.messageWithoutUndo.observe(viewLifecycleOwner) { message ->
-            if (message != null) {
-                Snackbar.make(requireParentFragment().requireView(), message, Snackbar.LENGTH_LONG)
+        viewModel.messageWithoutUndoEvent.observe(viewLifecycleOwner) { message ->
+            message?.let {
+                Snackbar.make(
+                    requireParentFragment().requireView(),
+                    it,
+                    Snackbar.LENGTH_LONG
+                )
                     .show()
             }
         }
-
         super.onViewCreated(view, savedInstanceState)
     }
 

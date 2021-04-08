@@ -2,8 +2,8 @@ package ru.romanoval.data.restful
 
 import retrofit2.Response
 import retrofit2.http.*
+import ru.romanoval.data.model.ServerHabit
 import ru.romanoval.domain.model.restful.PostDone
-import ru.romanoval.domain.model.restful.ServerHabit
 import ru.romanoval.domain.model.restful.Uid
 
 interface ApiService {

@@ -4,43 +4,31 @@ import android.app.Application
 import androidx.lifecycle.*
 import com.example.myhabits3.R
 import com.example.myhabits3.ui.utils.FilterTypes
+import com.example.myhabits3.ui.utils.LiveEvent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
-import okhttp3.ResponseBody
+import kotlinx.coroutines.flow.collect
 import retrofit2.HttpException
-import retrofit2.Retrofit
-import ru.romanoval.data.mapper.ErrorConverter
-import ru.romanoval.data.mapper.HabitMapper
 import ru.romanoval.domain.model.Habit
-import ru.romanoval.domain.model.restful.Error
-import ru.romanoval.domain.model.restful.PostDone
-import ru.romanoval.domain.model.restful.Uid
-import useCases.api.DeleteHabitFromApiUseCase
-import useCases.api.GetHabitsFromApiUseCase
-import useCases.api.PostHabitDoneUseCase
-import useCases.api.PutHabitApiUseCase
+import ru.romanoval.domain.model.HabitState
+import useCases.doneDates.CalculateDoneDateUseCase
+import useCases.api.DownloadHabitsFromApiUseCase
+import useCases.api.LoadOnServerUseCase
 import useCases.database.*
-import java.lang.Exception
-import java.util.*
 import javax.inject.Inject
 
 class MainViewModel @Inject constructor(
     private val getHabitsFromDBUseCase: GetHabitsFromDBUseCase,
     private val insertHabitIntoDBUseCase: InsertHabitIntoDBUseCase,
-    private val insertHabitsIntoDBUseCase: InsertHabitsIntoDBUseCase,
     private val updateHabitInDBUseCase: UpdateHabitInDBUseCase,
     private val deleteHabitFromDBUseCase: DeleteHabitFromDBUseCase,
-    private val deleteAllHabitsFromDBUseCase: DeleteAllHabitsFromDBUseCase,
-    private val getHabitsFromApiUseCase: GetHabitsFromApiUseCase,
-    private val putHabitApiUseCase: PutHabitApiUseCase,
-    private val postHabitDoneUseCase: PostHabitDoneUseCase,
-    private val deleteHabitFromApiUseCase: DeleteHabitFromApiUseCase,
-    private val habitMapper: HabitMapper,
-    private val errorConverter: ErrorConverter,
+    private val loadOnServerUseCase: LoadOnServerUseCase,
+    private val downloadHabitsFromApiUseCase: DownloadHabitsFromApiUseCase,
+    private val calculateDoneDateUseCase: CalculateDoneDateUseCase,
     application: Application
 ) : AndroidViewModel(application) {
-
 
     private val currentHabitsLiveData: MutableLiveData<MutableList<Habit>> = MutableLiveData()
     val currentHabits: LiveData<MutableList<Habit>> get() = currentHabitsLiveData
@@ -48,11 +36,8 @@ class MainViewModel @Inject constructor(
     private val isLoadingLiveData: MutableLiveData<Boolean> = MutableLiveData()
     val isLoading: LiveData<Boolean> get() = isLoadingLiveData
 
-    private val messageLiveData: MutableLiveData<String> = MutableLiveData()
-    val message: LiveData<String> get() = messageLiveData
-
-    private val messageWithoutUndoLiveData: MutableLiveData<String> = MutableLiveData()
-    val messageWithoutUndo: LiveData<String> get() = messageWithoutUndoLiveData
+    val messageWithUndoEvent: LiveEvent<Pair<Habit, String>> = LiveEvent()
+    val messageWithoutUndoEvent: LiveEvent<String> = LiveEvent()
 
     private val apiErrorLiveData: MutableLiveData<String> = MutableLiveData()
     val apiError: LiveData<String> get() = apiErrorLiveData
@@ -189,233 +174,160 @@ class MainViewModel @Inject constructor(
 
 
     fun addDoneTimes(habit: Habit) {
-        habit.doneDates.add(Calendar.getInstance().timeInMillis)
         viewModelScope.launch(Dispatchers.IO) {
-            updateHabitInDBUseCase.execute(habit)
+            val state = calculateDoneDateUseCase.execute(habit, true)
+            when (state.doneState) {
+                HabitState.doneNotEnough -> setMessageWithLessCount(true, habit, state.count)
+                HabitState.doneJustEnough -> setMessageWithEqualCount(true, habit)
+                HabitState.doneMoreThanNeeded -> setMessageWithMoreCount(true, habit)
+            }
         }
-        calculate(habit, true)
     }
 
     fun removeLastDoneTimes(habit: Habit) {
-        habit.doneDates.removeLast()
         viewModelScope.launch(Dispatchers.IO) {
-            updateHabitInDBUseCase.execute(habit)
-        }
-        calculate(habit, false)
-    }
-
-    private fun calculate(habit: Habit, withUndo: Boolean) {
-
-        val currentTime = Calendar.getInstance().time.time
-
-        when (habit.frequency) {
-            0 -> { //per hour
-                val from = currentTime - HOUR
-                val curCount = habit.doneDates.filter {
-                    (it in from..currentTime)
-                }.size
-                displayMessage(habit.count, curCount, withUndo)
-
-            }
-            1 -> { //per day
-                val from = currentTime - DAY
-                val curCount = habit.doneDates.filter {
-                    (it in from..currentTime)
-                }.size
-                displayMessage(habit.count, curCount, withUndo)
-            }
-            2 -> {//per week
-                val from = currentTime - WEEK
-                val curCount = habit.doneDates.filter {
-                    (it in from..currentTime)
-                }.size
-                displayMessage(habit.count, curCount, withUndo)
-            }
-            3 -> {//per month
-                val from = currentTime - MONTH
-                val curCount = habit.doneDates.filter {
-                    (it in from..currentTime)
-                }.size
-                displayMessage(habit.count, curCount, withUndo)
-            }
-            4 -> {//per year
-                val from = currentTime - YEAR
-                val curCount = habit.doneDates.filter {
-                    (it in from..currentTime)
-                }.size
-                displayMessage(habit.count, curCount, withUndo)
+            val state = calculateDoneDateUseCase.execute(habit, false)
+            when (state.doneState) {
+                HabitState.doneNotEnough -> setMessageWithLessCount(false, habit, state.count)
+                HabitState.doneJustEnough -> setMessageWithEqualCount(false, habit)
+                HabitState.doneMoreThanNeeded -> setMessageWithMoreCount(false, habit)
             }
         }
     }
 
-    private fun displayMessage(count: Int, curCount: Int, withUndo: Boolean) {
-        when {
-            curCount < count -> {
-                if (withUndo) {
-                    messageLiveData.value =
-                        getApplication<Application>().resources.getString(
-                            R.string.you_have_to_do_this_habit,
-                            (count - curCount).toString()
-                        )
-                } else {
-                    messageWithoutUndoLiveData.value =
-                        getApplication<Application>().resources.getString(
-                            R.string.you_have_to_do_this_habit,
-                            (count - curCount).toString()
-                        )
-                }
-            }
-            curCount > count -> {
-                if (withUndo) {
-                    messageLiveData.value =
-                        getApplication<Application>().resources.getString(
-                            R.string.you_have_already_done_enough
-                        )
-                } else {
-                    messageWithoutUndoLiveData.value =
-                        getApplication<Application>().resources.getString(
-                            R.string.you_have_already_done_enough
-                        )
-                }
-            }
-            else -> {
-                if (withUndo) {
-                    messageLiveData.value =
+
+    private fun setMessageWithEqualCount(
+        withUndo: Boolean,
+        habit: Habit
+    ) {
+        if (withUndo) {
+            messageWithUndoEvent.postValue(
+                if (habit.type.toBoolean()) {
+                    Pair(
+                        habit,
                         getApplication<Application>().resources.getString(
                             R.string.you_are_breathtaking
                         )
+                    )
                 } else {
-                    messageWithoutUndoLiveData.value =
+                    Pair(
+                        habit,
                         getApplication<Application>().resources.getString(
-                            R.string.you_are_breathtaking
+                            R.string.you_should_not_do_this_habit_more
                         )
+                    )
                 }
-
-
-            }
-        }
-        messageLiveData.value = null
-        messageWithoutUndoLiveData.value = null
-
-    }
-
-    private suspend fun putHabitsIntoApiAndChangeUid(habits: List<Habit>): Boolean {
-
-        habits.forEach { habit ->
-            val response = putHabitApiUseCase.execute(
-                habitMapper.habitToServerHabit(
-                    habitMapper.habitDomainToHabitData(habit)
-                )
             )
-            if (response.isSuccessful) {
-
-                response.body()?.let {
-                    habit.uid = it.uid
-                    updateHabitInDBUseCase.execute(habit)
+        } else {
+            messageWithoutUndoEvent.postValue(
+                if (habit.type.toBoolean()) {
+                    getApplication<Application>().resources.getString(
+                        R.string.you_are_breathtaking
+                    )
+                } else {
+                    getApplication<Application>().resources.getString(
+                        R.string.you_should_not_do_this_habit_more
+                    )
                 }
-
-            } else {
-                val error = convertError(response.errorBody())
-                error?.let {
-                    isLoadingLiveData.postValue(false)
-                    apiErrorLiveData.postValue("error ${it.code} - ${it.message}")
-                }
-                return false
-            }
+            )
         }
-        return true
     }
 
-    private fun convertError(errorBody: ResponseBody?): Error? =
-        errorConverter.convertError(errorBody)
+    private fun setMessageWithMoreCount(
+        withUndo: Boolean,
+        habit: Habit
+    ) {
+        if (withUndo) {
+            messageWithUndoEvent.postValue(
+                if (habit.type.toBoolean()) {
+                    Pair(
+                        habit,
+                        getApplication<Application>().resources.getString(
+                            R.string.you_have_already_done_enough
+                        )
+                    )
+                } else {
+                    Pair(
+                        habit,
+                        getApplication<Application>().resources.getString(
+                            R.string.stop_doing_this_habit
+                        )
+                    )
+                }
+            )
+        } else {
+            messageWithoutUndoEvent.postValue(
+                if (habit.type.toBoolean()) {
+                    getApplication<Application>().resources.getString(
+                        R.string.you_have_already_done_enough
+                    )
+                } else {
+                    getApplication<Application>().resources.getString(
+                        R.string.stop_doing_this_habit
+                    )
+                }
+            )
+        }
+    }
+
+    private fun setMessageWithLessCount(
+        withUndo: Boolean,
+        habit: Habit,
+        count: Int
+    ) {
+        if (withUndo) {
+            messageWithUndoEvent.postValue(
+                if (habit.type.toBoolean()) {
+                    Pair(
+                        habit,
+                        getApplication<Application>().resources.getString(
+                            R.string.you_have_to_do_this_habit,
+                            (count).toString()
+                        )
+                    )
+                } else {
+                    Pair(
+                        habit,
+                        getApplication<Application>().resources.getString(
+                            R.string.you_can_do_this_habit,
+                            (count).toString()
+                        )
+                    )
+                }
+            )
+        } else {
+            messageWithoutUndoEvent.postValue(
+                if (habit.type.toBoolean()) {
+                    getApplication<Application>().resources.getString(
+                        R.string.you_have_to_do_this_habit,
+                        (count).toString()
+                    )
+                } else {
+                    getApplication<Application>().resources.getString(
+                        R.string.you_can_do_this_habit,
+                        (count).toString()
+                    )
+                }
+            )
+        }
+    }
+
 
     fun insertHabitsIntoApi() {
-
         viewModelScope.launch(Dispatchers.IO) {
 
             isLoadingLiveData.postValue(true)
-
-            try {
-                val habitsFromApiResponse = getHabitsFromApiUseCase.execute()
-
-                if (habitsFromApiResponse.isSuccessful) {
-                    habitsFromApiResponse.body()?.let { habitsFromApi ->
-
-                        habitsFromApi.forEach {  //Удаляем всё, что есть в апи
-                            val uid = Uid(it.uid!!)
-                            val deleteResponse = deleteHabitFromApiUseCase.execute(uid)
-                            if (!deleteResponse.isSuccessful) {
-                                val error = convertError(deleteResponse.errorBody())
-                                error?.let { err ->
-                                    apiErrorLiveData.postValue("error ${err.code} - ${err.message}")
-                                }
-                                isLoadingLiveData.postValue(false)
-                                return@launch
-                            }
-                        }
-                    }
-                } else {
-                    val error = convertError(habitsFromApiResponse.errorBody())
-                    error?.let {
-                        apiErrorLiveData.postValue("error ${it.code} - ${it.message}")
-                    }
+            loadOnServerUseCase.execute()
+                .catch { e ->
+                    val needToRetry = catchException(e)
+                    if (needToRetry) insertHabitsIntoApi()
+                }
+                .collect { responseData ->
+                    if (!responseData.isSuccessful)
+                        apiErrorLiveData.postValue(responseData.errorMessage!!)
                     isLoadingLiveData.postValue(false)
-                    return@launch
                 }
-
-                val habitsFromDb = getHabitsFromDBUseCase.execute()
-
-                val putResult =
-                    putHabitsIntoApiAndChangeUid(habitsFromDb) //Получаем привычки и меняем Uid у текущих в бд
-
-                if (!putResult) { //Если мы не смогли что-то положить в апи
-                    //Ошибка
-                    isLoadingLiveData.postValue(false)
-                    return@launch
-
-                }
-
-                getHabitsFromDBUseCase.execute().forEach { habit ->
-                    habit.uid?.let { uid ->
-                        habit.doneDates.forEach { doneDate ->
-                            val postHabitDoneResponse = postHabitDoneUseCase.execute(
-                                PostDone(
-                                    uid,
-                                    doneDate
-                                )
-                            ) //Постим done_dates
-                            if (!postHabitDoneResponse.isSuccessful) {
-                                val error = convertError(postHabitDoneResponse.errorBody())
-                                error?.let {
-                                    apiErrorLiveData.postValue("error ${it.code} - ${it.message}")
-                                }
-                                isLoadingLiveData.postValue(false)
-                                return@launch
-                            }
-                        }
-
-                    }
-
-                }
-
-                isLoadingLiveData.postValue(false)
-            } catch (e: Exception) {
-
-                if (e is HttpException) {
-                    apiErrorLiveData.postValue("error ${e.code()} - ${e.message()}")
-
-                    isLoadingLiveData.postValue(false)
-                } else {
-                    delay(5000) //Если случилась непредвиденная ошибка, то повторяем запросы
-                    insertHabitsIntoApi()
-                    //TODO сделать счетчик запросов
-                }
-
-                isLoadingLiveData.postValue(false)
-            }
-
         }
-
     }
 
     fun downloadHabitsFromApi() {
@@ -423,66 +335,35 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
 
             isLoadingLiveData.postValue(true)
-
-            try {
-
-
-                val habitsFromApiResponse =
-                    getHabitsFromApiUseCase.execute()//Получаем привычки из апи
-                if (habitsFromApiResponse.isSuccessful) {
-                    deleteAllHabitsFromDBUseCase.execute() //Удаляем все привычки из БД
-
-                    habitsFromApiResponse.body()?.let { habitsFromApi ->
-                        val dataHabits = habitsFromApi.map {
-                            habitMapper.serverHabitToHabit(it)
-                        }.asReversed()
-                        insertHabitsIntoDBUseCase.execute(
-                            dataHabits.map {
-                                habitMapper.habitDataToHabitDomain(it)
-                            }
-                        )
-                        currentHabitsLiveData.postValue(
-                            getHabitsFromDBUseCase.execute().toMutableList()
-                        )
-
-                        isLoadingLiveData.postValue(false)
-                    }
-
-                } else {
-                    val error = convertError(habitsFromApiResponse.errorBody())
-                    error?.let {
-                        apiErrorLiveData.postValue("error ${it.code} - ${it.message}")
-                    }
+            downloadHabitsFromApiUseCase.execute()
+                .catch { e ->
+                    val needToRetry = catchException(e)
+                    if (needToRetry) downloadHabitsFromApi()
+                }
+                .collect { responseData ->
+                    if (!responseData.isSuccessful)
+                        apiErrorLiveData.postValue(responseData.errorMessage)
                     isLoadingLiveData.postValue(false)
-                    return@launch
                 }
 
-            } catch (e: Exception) {
-
-                if (e is HttpException) {
-                    apiErrorLiveData.postValue("error ${e.code()} - ${e.message()}")
-
-                    isLoadingLiveData.postValue(false)
-                } else {
-                    println(e.message)
-                    delay(5000)
-                    downloadHabitsFromApi()
-                }
-
-
-                isLoadingLiveData.postValue(false)
-            }
-
+            cleanHabitsFilter()
         }
-
     }
 
-    companion object {
-        const val HOUR = 3600000
-        const val DAY = 86400000
-        const val WEEK = 604800000
-        const val MONTH = 2592000000
-        const val YEAR = 31536000000
+    private suspend fun catchException(e: Throwable): Boolean {
+        var needToRetry = false
+        if (e is HttpException) {
+            apiErrorLiveData.postValue("error ${e.code()} - ${e.message()}")
+            delay(5000) //Если случилась ошибка сети, повторяем запрос, мало ли что
+            needToRetry = true
+        } else {
+            apiErrorLiveData.postValue("Что-то пошло не так, передайте разработчику, что он криворукий")
+            e.printStackTrace()
+            isLoadingLiveData.postValue(false)
+        }
+        return needToRetry
     }
+
+    private fun Int.toBoolean(): Boolean = this == 1
 
 }

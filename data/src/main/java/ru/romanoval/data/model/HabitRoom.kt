@@ -1,6 +1,5 @@
 package ru.romanoval.data.model
 
-import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverter
@@ -8,7 +7,7 @@ import androidx.room.TypeConverters
 import java.io.Serializable
 
 @Entity
-data class Habit(
+data class HabitRoom(
     var uid: String?,
     @PrimaryKey(autoGenerate = true)
     var bdId: Int?,

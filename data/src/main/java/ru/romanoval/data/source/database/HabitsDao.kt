@@ -1,25 +1,24 @@
 package ru.romanoval.data.source.database
 
 import androidx.room.*
-import kotlinx.coroutines.flow.Flow
-import ru.romanoval.data.model.Habit
+import ru.romanoval.data.model.HabitRoom
 
 @Dao
 interface HabitsDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertHabit(habit: Habit)
+    suspend fun insertHabit(habitRoom: HabitRoom)
 
-    @Query("SELECT * from Habit ORDER BY bdId DESC")
-    suspend fun selectAllHabits(): List<Habit>
+    @Query("SELECT * from HabitRoom ORDER BY bdId DESC")
+    suspend fun selectAllHabits(): List<HabitRoom>
 
     @Delete
-    suspend fun deleteHabit(habit: Habit)
+    suspend fun deleteHabit(habitRoom: HabitRoom)
 
-    @Query("DELETE FROM Habit")
+    @Query("DELETE FROM HabitRoom")
     suspend fun deleteAllHabits()
 
     @Update
-    suspend fun updateHabit(habit: Habit)
+    suspend fun updateHabit(habitRoom: HabitRoom)
 
 }
