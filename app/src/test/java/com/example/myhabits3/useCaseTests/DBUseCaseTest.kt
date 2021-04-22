@@ -56,8 +56,6 @@ class DBUseCaseTest {
         runBlocking {
             Mockito.`when`(appRepository.selectAllHabitsFromDB()).thenReturn(mockedAllHabits)
 
-            delay(1000)
-
             Assert.assertEquals(mockedAllHabits, getHabitsDBUseCase.execute())
         }
 
@@ -87,8 +85,6 @@ class DBUseCaseTest {
             }
             deleteHabitsDBUseCase.execute(habitToDelete)
 
-            delay(1000)
-
             Assert.assertEquals(2, mockedHabitsInDb.size)
         }
     }
@@ -105,9 +101,7 @@ class DBUseCaseTest {
                 .thenAnswer { mockedHabitsInDb.add(mockedHabit) }
 
             insertHabitDBUseCase.execute(mockedHabit)
-            delay(1000)
             insertHabitDBUseCase.execute(mockedHabit)
-            delay(1000)
             Assert.assertEquals(2, mockedHabitsInDb.size)
         }
 

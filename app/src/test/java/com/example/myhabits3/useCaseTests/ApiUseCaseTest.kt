@@ -20,6 +20,7 @@ import ru.romanoval.domain.model.ResponseData
 import ru.romanoval.domain.model.restful.PostDone
 import ru.romanoval.domain.model.restful.Uid
 import useCases.api.DownloadHabitsFromApiUseCase
+import useCases.api.LoadOnServerUseCase
 
 @RunWith(JUnit4::class)
 class ApiUseCaseTest {
@@ -40,6 +41,7 @@ class ApiUseCaseTest {
         MockitoAnnotations.initMocks(this)
 
         downloadHabitsFromApiUseCase = DownloadHabitsFromApiUseCase(appRepository)
+        loadOnServerUseCase = LoadOnServerUseCase(appRepository)
     }
 
 
@@ -132,6 +134,9 @@ class ApiUseCaseTest {
 
     @Mock
     private lateinit var postDones: List<PostDone>
+
+    @Mock
+    private lateinit var loadOnServerUseCase: LoadOnServerUseCase
 
     @Test
     fun `LoadOnServerUseCase test`() {
